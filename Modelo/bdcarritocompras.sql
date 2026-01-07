@@ -22,6 +22,20 @@ SET time_zone = "+00:00";
 -- Base de datos: `bdcarritocompras`
 --
 
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `usuario`
+--
+
+CREATE TABLE `usuario` (
+  `idusuario` bigint(20) NOT NULL,
+  `usnombre` varchar(50) NOT NULL,
+  `uspass` int(11) NOT NULL,
+  `usmail` varchar(50) NOT NULL,
+  `usdeshabilitado` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 -- --------------------------------------------------------
 
 --
@@ -74,14 +88,28 @@ INSERT INTO `compraestadotipo` (`idcompraestadotipo`, `cetdescripcion`, `cetdeta
 
 -- --------------------------------------------------------
 
+
+--
+-- Estructura de tabla para la tabla `producto`
+--
+
+CREATE TABLE `producto` (
+  `idproducto` bigint(20) NOT NULL,
+  `pronombre` int(11) NOT NULL,
+  `prodetalle` varchar(512) NOT NULL,
+  `procantstock` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+-- --------------------------------------------------------
+
 --
 -- Estructura de tabla para la tabla `compraitem`
 --
 
 CREATE TABLE `compraitem` (
   `idcompraitem` bigint(20) UNSIGNED NOT NULL,
-  `idproducto` bigint(20) NOT NULL,
   `idcompra` bigint(20) NOT NULL,
+  `idproducto` bigint(20) NOT NULL,
   `cicantidad` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
@@ -136,32 +164,6 @@ CREATE TABLE `menurol` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 
--- --------------------------------------------------------
-
---
--- Estructura de tabla para la tabla `producto`
---
-
-CREATE TABLE `producto` (
-  `idproducto` bigint(20) NOT NULL,
-  `pronombre` int(11) NOT NULL,
-  `prodetalle` varchar(512) NOT NULL,
-  `procantstock` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
--- --------------------------------------------------------
-
---
--- Estructura de tabla para la tabla `usuario`
---
-
-CREATE TABLE `usuario` (
-  `idusuario` bigint(20) NOT NULL,
-  `usnombre` varchar(50) NOT NULL,
-  `uspass` int(11) NOT NULL,
-  `usmail` varchar(50) NOT NULL,
-  `usdeshabilitado` timestamp NULL DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
 
@@ -175,6 +177,7 @@ CREATE TABLE `usuariorol` (
   `idusuario` bigint(20) NOT NULL,
   `idrol` bigint(20) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
 
 
 --
