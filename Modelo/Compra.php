@@ -93,9 +93,9 @@ class Compra
     {
         $resp = false;
         $base = new BaseDatos();
-        $sql = "INSERT INTO compra(idcompra, cofecha, idusuario)
+        $sql = "INSERT INTO compra(, cofecha, idusuario)
         VALUES (
-            '" . $this->getIdCompra() . "',
+            '',
             '" . $this->getFecha() . "',
             '" . $this->getObjUsuario()->getIdUsuario() . "'
         )";
@@ -170,7 +170,7 @@ class Compra
             if ($res > 0) {
 
                 while ($row = $base->Registro()) {
-                    $obj = new compra();
+                    $obj = new Compra();
 
                     $objusuario = new Usuario();
                     $objusuario->setIdUsuario($row['idusuario']);

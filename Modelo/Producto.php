@@ -97,8 +97,8 @@ class Producto
     {
         $resp = false;
         $base = new BaseDatos();
-        $sql = "INSERT INTO producto(idproducto, pronombre, prodetalle, procantstock)  
-        VALUES('" . $this->getIdProducto() . "', 
+        $sql = "INSERT INTO producto(pronombre, prodetalle, procantstock)  
+        VALUES('', 
         '" . $this->getNombreProducto() . "', 
         '" . $this->getDetalleProducto() . "', 
         '" . $this->getStockProducto() . "')";

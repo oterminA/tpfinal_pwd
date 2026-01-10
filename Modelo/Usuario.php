@@ -109,8 +109,8 @@ class Usuario
     {
         $resp = false;
         $base = new BaseDatos();
-        $sql = "INSERT INTO usuario(idusuario, usnombre, uspass, usmail, usdeshabilitado)  
-        VALUES('" . $this->getIdUsuario() . "', '" 
+        $sql = "INSERT INTO usuario(usnombre, uspass, usmail, usdeshabilitado)  
+        VALUES('', '" 
         . $this->getUsNombre() . "', '" 
         . $this->getUsPass() . "', '" 
         . $this->getUsMail() . "', '" 
@@ -184,7 +184,7 @@ class Usuario
             if ($res > 0) {
 
                 while ($row = $base->Registro()) {
-                    $obj = new usuario(); 
+                    $obj = new Usuario(); 
                     $obj->setear($row['idusuario'], 
                     $row['usnombre'], 
                     $row['uspass'], 

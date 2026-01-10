@@ -94,9 +94,9 @@ class menurol
     {
         $resp = false;
         $base = new BaseDatos();
-        $sql = "INSERT INTO menurol(idmenurol, idmenu, idrol)
+        $sql = "INSERT INTO menurol(idmenu, idrol)
         VALUES (
-            '" . $this->getIdMenuRol() . "',
+            '',
             '" . $this->getObjMenu()->getIdMenu() . "',
             '" . $this->getObjRol()->getIdRol() . "'
         )";
@@ -169,7 +169,7 @@ class menurol
         if ($res > -1) {
             if ($res > 0) {
                 while ($row = $base->Registro()) {
-                    $obj = new menurol();
+                    $obj = new MenuRol();
 
                     $objmenu = new Menu();
                     $objmenu->setIdMenu($row['idmenu']);

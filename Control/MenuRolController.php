@@ -11,7 +11,7 @@ class MenuRolController
     private function cargarObjeto($param)
     {
         $obj = null;
-        if (isset($param['idmenurol']) && isset($param['idmenu']) && isset($param['idrol'])) {
+        if (isset($param['idmenu']) && isset($param['idrol'])) {
 
             $id = $param['idmenurol'] ?? null; // si no existe ese id null porque en realidad acá no viene xq es autoincremental
 

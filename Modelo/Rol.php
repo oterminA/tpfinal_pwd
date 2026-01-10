@@ -1,5 +1,5 @@
 <?php
-
+include_once __DIR__ . '/conector/BaseDatos.php';
 class Rol
 {
     private $idrol;
@@ -72,22 +72,18 @@ class Rol
     {
         $resp = false;
         $base = new BaseDatos();
-        $sql = "INSERT INTO rol(idrol, rodescripcion)  
-        VALUES('" . $this->getIdRol() . "', 
-        '" . $this->getRodescripcion() . "')";
+        $sql = "INSERT INTO rol (rodescripcion) VALUES ('" . $this->getRodescripcion() . "')";
 
-        if ($base->Iniciar()) {
-            if ($elidrol = $base->Ejecutar($sql)) {
-                $this->setIdRol($elidrol);
-                $resp = true;
-            } else {
-                $this->setmensajeoperacion("rol->insertar: " . $base->getError());
-            }
+    if ($base->Iniciar()) {
+        if ($idGenerado = $base->Ejecutar($sql)) {
+            $this->setIdRol($idGenerado); 
+            $resp = true;
         } else {
             $this->setmensajeoperacion("rol->insertar: " . $base->getError());
         }
-        return $resp;
     }
+    return $resp;
+}
 
     public function modificar()
     {
@@ -139,14 +135,12 @@ class Rol
             if ($res > 0) {
 
                 while ($row = $base->Registro()) {
-                    $obj = new rol(); 
+                    $obj = new Rol(); 
                     $obj->setear($row['idrol'], $row['rodescripcion']);
                     array_push($arreglo, $obj);
                 }
             }
-        } else {
-            self::setmensajeoperacion("rol->listar: " . $base->getError()); 
-        }
+        } 
 
         return $arreglo;
     }

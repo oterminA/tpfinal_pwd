@@ -1,4 +1,5 @@
 <?php
+include_once __DIR__ . '/../Modelo/Rol.php';
 class RolController
 {
     /**
@@ -11,7 +12,7 @@ class RolController
     private function cargarObjeto($param)
     {
         $obj = null;
-        if (isset($param['idrol']) && isset($param['rodescripcion'])) {
+        if (isset($param['rodescripcion'])) {
 
             $id = $param['idrol'] ?? null; // si no existe ese id null porque en realidad acá no viene xq es autoincremental
     

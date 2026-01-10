@@ -11,7 +11,7 @@ class CompraItemController
     private function cargarObjeto($param)
     {
         $obj = null;
-        if (isset($param['idcompraitem']) && isset($param['idcompra']) && isset($param['idproducto']) && isset($param['cicantidad'])) {
+        if (isset($param['idproducto']) && isset($param['cicantidad'])) {
 
             $id = $param['idcompraitem'] ?? null; // si no existe ese id null porque en realidad acá no viene xq es autoincremental
 

@@ -1,43 +1,51 @@
-<?php 
-function data_submitted() {
-    
-    $_AAux= array();
-    if (!empty($_REQUEST))
-        $_AAux =$_REQUEST;
-     if (count($_AAux)){
-            foreach ($_AAux as $indice => $valor) {
-                if ($valor=="")
-                    $_AAux[$indice] = 'null' ;
-            }
+<?php
+//acá voy a guardar las funciones auxiliares
+
+define('ROOT', dirname(__DIR__) . '/'); 
+
+//////DATA_SUBMITTED: esta funcion es para encapsular los envios de post/get de la info del formulario
+function data_submitted()
+{
+    $datos = [];
+
+    if (!empty($_POST)) {
+        $datos = $_POST;
+    } elseif (!empty($_GET)) {
+        $datos = $_GET;
+    } //evaluo si vienen por post o get
+
+    foreach ($datos as $clave => $valor) {
+        $datos[$clave] = ($valor === "") ? null : $valor;
+    }
+
+    if (!empty($_FILES)) {
+        foreach ($_FILES as $clave => $archivo) {
+            $datos[$clave] = $archivo;
         }
-     return $_AAux;
-        
-}
-function verEstructura($e){
-    echo "<pre>";
-    print_r($e);
-    echo "</pre>"; 
+    }
+
+    return $datos; //retorno los datos del arreglo en un array con la clve siendo el name de la etiqueta y el valor siendo el contenido
 }
 
-spl_autoload_register(function ($class_name) {
-   
 
-//function __autoload($class_name){
-    //echo "class ".$class_name ;
-    $directorys = array(
-        $_SESSION['ROOT'].'Modelo/',
-        $_SESSION['ROOT'].'Modelo/conector/',
-        $_SESSION['ROOT'].'Control/',
-      //  $GLOBALS['ROOT'].'util/class/',
-    );
-    //print_object($directorys) ;
-    foreach($directorys as $directory){
-        if(file_exists($directory.$class_name . '.php')){
-            // echo "se incluyo".$directory.$class_name . '.php';
-            require_once($directory.$class_name . '.php');
+
+//////AUTOLOAD: esta funcion es para incluir 'dinamicamente' los objetos del control y del modelo, en lugar de hacer include_once todo el tiempo
+spl_autoload_register(function ($className) {
+    $directorios = [ //las sgtes son las rutas donde buscar las clases
+        ROOT . 'Modelo/', 
+        ROOT . 'Modelo/TP5/',         
+        ROOT . 'Modelo/conector/', 
+        ROOT . 'Control/',
+        ROOT . 'Control/TP5/',
+    ];
+
+    foreach ($directorios as $directorio) {
+        $archivo = $directorio . $className . '.php';
+        if (file_exists($archivo)) {
+            require_once $archivo;
             return;
         }
     }
-//}
+
+    error_log("Autoload: Clase '$className' no encontrada en: " . implode(', ', $directorios));//msj por si falla
 });
-?>

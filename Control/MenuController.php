@@ -11,7 +11,7 @@ class MenuController
     private function cargarObjeto($param)
     {
         $obj = null;
-        if (isset($param['idmenu']) && isset($param['menombre']) && isset($param['medescripcion']) && isset($param['idpadre']) && isset($param['medeshabilitado'])) {
+        if (isset($param['menombre']) && isset($param['medescripcion']) && isset($param['idpadre']) && isset($param['medeshabilitado'])) {
 
             $id = $param['idmenu'] ?? null; // si no existe ese id null porque en realidad acá no viene xq es autoincremental
 

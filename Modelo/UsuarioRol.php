@@ -94,9 +94,9 @@ class UsuarioRol
     {
         $resp = false;
         $base = new BaseDatos();
-        $sql = "INSERT INTO usuariorol(idusuariorol, idusuario, idrol)
+        $sql = "INSERT INTO usuariorol(idusuario, idrol)
         VALUES (
-            '" . $this->getIdUsuarioRol() . "',
+            '',
             '" . $this->getObjUsuario()->getIdUsuario() . "',
             '" . $this->getObjRol()->getIdRol() . "'
         )";
@@ -168,7 +168,7 @@ class UsuarioRol
         if ($res > -1) {
             if ($res > 0) {
                 while ($row = $base->Registro()) {
-                    $obj = new usuariorol();
+                    $obj = new UsuarioRol();
 
                     $idusuario = new Usuario();
                     $idusuario->setIdUsuario($row['idusuario']);

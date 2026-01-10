@@ -85,8 +85,8 @@ class CompraEstadoTipo
     {
         $resp = false;
         $base = new BaseDatos();
-        $sql = "INSERT INTO compraestadotipo(idcompraestadotipo, cetdescripcion, cetdetalle)  
-        VALUES('" . $this->getIdCompraEstadoTipo() . "', '" 
+        $sql = "INSERT INTO compraestadotipo(cetdescripcion, cetdetalle)  
+        VALUES('', '" 
         . $this->getDescripcion() . "', '" 
         . $this->getDetalle() . "')";
 
@@ -156,7 +156,7 @@ class CompraEstadoTipo
             if ($res > 0) {
 
                 while ($row = $base->Registro()) {
-                    $obj = new compraestadotipo(); 
+                    $obj = new CompraEstadoTipo(); 
                     $obj->setear($row['idcompraestadotipo'], 
                     $row['cetdescripcion'], 
                     $row['cetdetalle']);

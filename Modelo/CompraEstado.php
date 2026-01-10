@@ -119,9 +119,9 @@ class CompraEstado
     {
         $resp = false;
         $base = new BaseDatos();
-        $sql = "INSERT INTO compraestado(idcompraestado, objcompra, idcompraestadotipo, cefechaini, cefechafin)
+        $sql = "INSERT INTO compraestado(objcompra, idcompraestadotipo, cefechaini, cefechafin)
         VALUES (
-            '" . $this->getIdCompraEstado() . "',
+            '',
             '" . $this->getObjCompra()->getIdCompra() . "',
             '" . $this->getObjCet()->getIdCompraEstadoTipo() . "',
             '" . $this->getFechaIni() . "',

@@ -106,9 +106,9 @@ class compraitem
     {
         $resp = false;
         $base = new BaseDatos();
-        $sql = "INSERT INTO compraitem(idcompraitem, objcompra, idproducto, cicantidad)
+        $sql = "INSERT INTO compraitem(objcompra, idproducto, cicantidad)
         VALUES (
-            '" . $this->getIdCompraItem() . "',
+            '',
             '" . $this->getObjCompra()->getIdCompra() . "',
             '" . $this->getObjProducto()->getIdProducto() . "',
             '" . $this->getCantidad() . "'

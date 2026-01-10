@@ -117,9 +117,10 @@ class Menu
     {
         $resp = false;
         $base = new BaseDatos();
-        $sql = "INSERT INTO menu(idmenu, menombre, medescripcion, idpadre, medeshabilitado)
+        $sql = "INSERT INTO menu( menombre, medescripcion, idpadre, medeshabilitado)
         VALUES (
-            '" . $this->getIdMenu() . "',
+            '
+            ',
             '" . $this->getNombreMenu() . "',
             '" . $this->getMenuDescripcion() . "',
             '" . $this->getObjMenuPadre()->getIdMenu() . "',
