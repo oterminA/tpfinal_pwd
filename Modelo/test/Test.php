@@ -1,18 +1,27 @@
 <?php
-include_once __DIR__ . '/../conector/BaseDatos.php';
-include_once __DIR__ . '/../../Control/RolController.php';
+include_once '../../util/funciones.php';
 
 $bd = new BaseDatos();
-$ctrlRol = new RolController;
+$ctrlRol = new RolController();
+$ctrlUsuario = new UsuarioController();
+
 
 //alta
-$paramRol = ['rodescripcion'=> 'admin'];
-$altaRol = $ctrlRol->alta($paramRol);
-if ($altaRol){
-    echo "ALTA REALIZADA.\n";
-}else{
-    echo "ERROR.\n";
-}
+// $paramRol = ['rodescripcion'=> 'deposito'];
+// $altaRol = $ctrlRol->alta($paramRol);
+// if ($altaRol){
+//     echo "ALTA REALIZADA.\n";
+// }else{
+//     echo "ERROR.\n";
+// }
+
+// $paramUsuario = ['usnombre'=> 'caro', 'uspass'=> 0123, 'usmail'=> 'caro@yahoo.com', 'usdeshabilitado'=> ''];
+// $altaUsuario = $ctrlUsuario->alta($paramUsuario);
+// if ($altaUsuario){
+//     echo "ALTA REALIZADA.\n";
+// }else{
+//     echo "ERROR.\n";
+// }
 
 
 // //baja

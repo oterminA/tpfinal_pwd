@@ -1,43 +1,36 @@
 <?php
-class Usuario
-{
-    private $idusuario;
-    private $usnombre;
-    private $uspass;
-    private $usdeshabilitado;
-    private $usmail;
+class Usuario{
+    private $idUsuario;
+    private $nombre;
+    private $contrasenia;
+    private $mail;
+    private $deshabilitado; 
     private $mensajeBD;
-
 
     public function __construct()
     {
-        $this->idusuario = "";
-        $this->usnombre = "";
-        $this->uspass = "";
-        $this->usdeshabilitado = "";
-        $this->usmail = "";
+        $this-> idUsuario= "";
+        $this-> nombre= "";
+        $this-> contrasenia= "";
+        $this-> mail= "";
+        $this-> deshabilitado= "";
         $this->mensajeBD = "";
     }
 
-    public function getIdUsuario()
-    {
-        return $this->idusuario;
+    public function getIdUsuario(){
+        return $this->idUsuario;
     }
-    public function getUsNombre()
-    {
-        return $this->usnombre;
+    public function getNombre(){
+        return $this->nombre;
     }
-    public function getUsPass()
-    {
-        return $this->uspass;
+    public function getContrasenia(){
+        return $this->contrasenia;
     }
-    public function getDeshabilitado()
-    {
-        return $this->usdeshabilitado;
+    public function getMail(){
+        return $this->mail;
     }
-    public function getUsMail()
-    {
-        return $this->usmail;
+    public function getDeshabilitado(){
+        return $this->deshabilitado;
     }
     public function getmensajeoperacion()
     {
@@ -45,62 +38,54 @@ class Usuario
     }
 
 
-    public function setIdUsuario($idusuario)
-    {
-        $this->idusuario = $idusuario;
+    public function setIdUsuario($idUsuario){
+        $this->idUsuario=$idUsuario;
     }
-    public function setUsNombre($usnombre)
-    {
-        $this->usnombre = $usnombre;
+    public function setNombre($nombre){
+        $this->nombre=$nombre;
     }
-    public function setUsPass($uspass)
-    {
-        $this->uspass = $uspass;
+    public function setContrasenia($contrasenia){
+        $this->contrasenia=$contrasenia;
     }
-    public function setDeshabilitado($usdeshabilitado)
-    {
-        $this->usdeshabilitado = $usdeshabilitado;
+    public function setMail($mail){
+        $this->mail=$mail;
     }
-    public function setUsMail($usmail)
-    {
-        $this->usmail = $usmail;
+    public function setDeshabilitado($deshabilitado){
+        $this->deshabilitado=$deshabilitado;
     }
     public function setmensajeoperacion($mensajeBD)
-    { 
+    { //lo que se muestra si hay o no algun error xq es una variable que viene desde la bd
         $this->mensajeBD = $mensajeBD;
     }
 
-    public function setear($idusuario, $usnombre, $uspass, $usdeshabilitado, $usmail)
-    {
-        $this->setIdUsuario($idusuario);
-        $this->setUsNombre($usnombre);
-        $this->setUsPass($uspass);
-        $this->setDeshabilitado($usdeshabilitado);
-        $this->setUsMail($usmail);
-    }
 
+    public function setear($idUsuario, $nombre, $contrasenia, $mail, $deshabilitado)
+    {
+        $this->setIdUsuario($idUsuario);
+        $this->setNombre($nombre);
+        $this->setContrasenia($contrasenia);
+        $this->setMail($mail);
+        $this->setDeshabilitado($deshabilitado);
+    }
 
     public function cargar()
     {
         $resp = false;
         $base = new BaseDatos();
-        $sql = "SELECT * FROM usuario WHERE idusuario = " . $this->getIdUsuario();
+        $sql = "SELECT * FROM usuario WHERE idusuario = '" . $this->getIdUsuario() . "'";
+    
         if ($base->Iniciar()) {
             $res = $base->Ejecutar($sql);
             if ($res > -1) {
                 if ($res > 0) {
                     $row = $base->Registro();
-                    $this->setear(
-                        $row['idusuario'], 
-                        $row['usnombre'], 
-                        $row['uspass'], 
-                        $row['usmail'], 
-                        $row['usdeshabilitado']);
+                    
+                    $this->setear($row['idusuario'], $row['usnombre'], $row['uspass'], $row['usmail'], $row['usdeshabilitado']);
                     $resp = true;
                 }
             }
         } else {
-            $this->setmensajeoperacion("usuario->listar: " . $base->getError());
+            $this->setmensajeoperacion("usuario->cargar: " . $base->getError());
         }
         return $resp;
     }
@@ -109,16 +94,18 @@ class Usuario
     {
         $resp = false;
         $base = new BaseDatos();
-        $sql = "INSERT INTO usuario(usnombre, uspass, usmail, usdeshabilitado)  
-        VALUES('', '" 
-        . $this->getUsNombre() . "', '" 
-        . $this->getUsPass() . "', '" 
-        . $this->getUsMail() . "', '" 
-        . $this->getDeshabilitado() . "')";
+        $sql = "INSERT INTO usuario (idusuario, usnombre, uspass, usmail, usdeshabilitado)
+        VALUES (
+            '',
+            '" . $this->getNombre() . "',
+            '" . $this->getContrasenia() . "',
+            '" . $this->getMail() . "',
+            '" . $this->getDeshabilitado() . "'
+        )";
 
         if ($base->Iniciar()) {
-            if ($elIdUsuario = $base->Ejecutar($sql)) {
-                $this->setIdUsuario($elIdUsuario);
+            if ($elUsId = $base->Ejecutar($sql)) {
+                $this->setIdUsuario($elUsId);
                 $resp = true;
             } else {
                 $this->setmensajeoperacion("usuario->insertar: " . $base->getError());
@@ -133,12 +120,13 @@ class Usuario
     {
         $resp = false;
         $base = new BaseDatos();
-        $sql = "UPDATE usuario 
-        SET usnombre='" . $this->getUsNombre() . "', 
-            uspass='" . $this->getUsPass() . "', 
-            usmail='" . $this->getUsMail() . "', 
-            usdeshabilitado='" . $this->getDeshabilitado() . "' 
-        WHERE idusuario='" . $this->getIdUsuario() . "'";
+        $sql = "UPDATE usuario SET
+            usnombre = '" . $this->getNombre() . "',
+            uspass = '" . $this->getContrasenia() . "',
+            usmail = '" . $this->getMail() . "',
+            usdeshabilitado = '" . $this->getDeshabilitado() . "'
+        WHERE idusuario = '" . $this->getIdUsuario() . "'";
+
 
         if ($base->Iniciar()) {
             if ($base->Ejecutar($sql)) {
@@ -151,13 +139,14 @@ class Usuario
         }
         return $resp;
     }
-
+    
 
     public function eliminar()
     {
         $resp = false;
         $base = new BaseDatos();
-        $sql = "DELETE FROM usuario WHERE idusuario=" . $this->getIdUsuario();
+        $sql = "DELETE FROM usuario WHERE idusuario='" . $this->getIdUsuario() . "'";
+
         if ($base->Iniciar()) {
             if ($base->Ejecutar($sql)) {
                 $resp= true;
@@ -170,46 +159,68 @@ class Usuario
         return $resp;
     }
 
-
-    public static function listar($parametro = "")
+    public static function listar($parametro = "") //NO MODIFICAR EL PARAMETRO PORQUE SE ROMPEN COSASSSSS
     {
-        $arreglo = array();
+        $arreglo = [];
         $base = new BaseDatos();
-        $sql = "SELECT * FROM usuario ";
+        $sql = "SELECT * FROM usuario";
+    
         if ($parametro != "") {
-            $sql .= 'WHERE ' . $parametro;
+            $sql .= " WHERE " . $parametro;
         }
-        $res = $base->Ejecutar($sql);
-        if ($res > -1) {
+    
+        if ($base->Iniciar()) {
+            $res = $base->Ejecutar($sql);
             if ($res > 0) {
-
                 while ($row = $base->Registro()) {
-                    $obj = new Usuario(); 
-                    $obj->setear($row['idusuario'], 
-                    $row['usnombre'], 
-                    $row['uspass'], 
-                    $row['usmail'], 
-                    $row['usdeshabilitado']);
-                    array_push($arreglo, $obj);
+                    $obj = new Usuario();
+                    $obj->setear(
+                        $row['idusuario'],
+                        $row['usnombre'],
+                        $row['uspass'],
+                        $row['usmail'],
+                        $row['usdeshabilitado']
+                    );
+                    $arreglo[] = $obj;
                 }
             }
-        } else {
-            self::setmensajeoperacion("usuario->listar: " . $base->getError());
         }
-
         return $arreglo;
     }
     
 
-    ///////////to_String()
+
+    public function buscar($idUsuario)
+    {
+        $base = new BaseDatos();
+        $sql = "SELECT * FROM usuario WHERE idusuario = " . $idUsuario;
+        $resp = false;
+        if ($base->Iniciar()) {
+            if ($base->Ejecutar($sql)) {
+                if ($row = $base->Registro()) {
+                    $this->cargar($row['idusuario'], $row['usnombre'], $row['uspass'], $row['usmail'], $row['usdeshabilitado']);
+                    $resp = true;
+                }
+            } else {
+                self::setmensajeoperacion($base->getError());
+            }
+        } else {
+            self::setmensajeoperacion($base->getError());
+        }
+        return $resp;
+    }
+
+    //to string
     public function __toString()
     {
-        $mensaje =
-            "ID usuario: " . $this->getIdUsuario() . "\n" .
-            "Nombre usuario: " . $this->getUsNombre() . "\n" .
-            "Contraseña usuario: " . $this->getUsPass() . "\n" .
-            "Mail usuario: " . $this->getUsMail() . "\n" .
-            "Deshabilitado: " . $this->getDeshabilitado() . "\n" ;
+        $mensaje = 
+        "Id usuario: " . $this->getIdUsuario() . "\n" . 
+        "Nombre: " . $this->getNombre() . "\n" . 
+        "Contraseña " . $this->getContrasenia() . "\n" . 
+        "Mail " . $this->getMail() . "\n" . 
+        "Deshabilitado " . $this->getDeshabilitado() . "\n" ;
         return $mensaje;
     }
 }
+
+?>
