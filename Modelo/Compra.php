@@ -1,4 +1,5 @@
 <?php
+//el modelo consulta directamente con la base de datos y le puede llegar a pasar info al control
 //hay delegación
 class Compra
 {
@@ -88,7 +89,9 @@ class Compra
         return $resp;
     }
 
-
+    /**
+     * crea una cadena SQL que corresponde a un INSERT
+    */
     public function insertar()
     {
         $resp = false;
@@ -115,6 +118,9 @@ class Compra
 
 
 
+    /**
+     *se crea una consulta SQL del tipo UPDATE
+    */
     public function modificar()
     {
         $resp = false;
@@ -137,7 +143,9 @@ class Compra
         return $resp;
     }
 
-
+    /**
+     * recibe una consulta SQL del tipo DELETE
+    */
     public function eliminar()
     {
         $resp = false;
@@ -156,7 +164,9 @@ class Compra
         return $resp;
     }
 
-
+    /**
+     * es como un select con una condición, devuelve el arreglo de esa consulta o null
+    */
     public static function listar($parametro = "")
     {
         $arreglo = array();
@@ -185,6 +195,33 @@ class Compra
         }
 
         return $arreglo;
+    }
+
+        /**
+     * recibe un id como parametro y ejecuta la consulta del SELECT buscando lo que coincida con la informacion
+    */
+    public function buscar($idCompra)
+    {
+        $base = new BaseDatos();
+        $consulta = "SELECT * FROM compra WHERE idcompra = " . $idCompra;
+        $resp = false;
+        if ($base->Iniciar()) {
+            if ($base->Ejecutar($consulta)) {
+                if ($row = $base->Registro()) {
+                    $objusuario = new Usuario();
+                    $objusuario->setIdUsuario($row['idusuario']);
+                    $objusuario->cargar();
+
+                    $this->cargar($row['idcompra'], $row['cofecha'], $objusuario);
+                    $resp = true;
+                }
+            } else {
+                self::setmensajeoperacion($base->getError());
+            }
+        } else {
+            self::setmensajeoperacion($base->getError());
+        }
+        return $resp;
     }
 
 

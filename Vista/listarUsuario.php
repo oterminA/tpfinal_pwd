@@ -41,7 +41,6 @@
                 <?php
                 if (is_array($arrayUsers)) {
                     foreach ($arrayUsers as $objUser) {
-                        $estado = ($objUser->getDeshabilitado() == null || $objUser->getDeshabilitado() == "0000-00-00 00:00:00") ? "Habilitado" : "Deshabilitado";
 
                         echo '<tr>';
                         // echo '<td>' . $objUser->getIdUsuario() . '</td>';
@@ -49,6 +48,7 @@
                         echo '<td>' . $objUser->getMail() . '</td>';
                         // echo '<td>' . $estado . '</td>';
                         echo '<td>';
+                        echo '<a class="btn btn-primary btn-accion" href="../Vista/actualizarUsuario.php?idusuario=' . $objUser->getIdUsuario() . '">Actualizar datos</a>';
                         echo '</td>';
                         echo '</tr>';
                     }

@@ -1,5 +1,5 @@
 <?php
-
+//el modelo consulta directamente con la base de datos y le puede llegar a pasar info al control
 class Producto
 {
     private $idproducto;
@@ -93,6 +93,9 @@ class Producto
         return $resp;
     }
 
+        /**
+     * crea una cadena SQL que corresponde a un INSERT
+    */
     public function insertar()
     {
         $resp = false;
@@ -116,7 +119,9 @@ class Producto
         return $resp;
     }
 
-
+    /**
+     *se crea una consulta SQL del tipo UPDATE
+    */
     public function modificar()
     {
         $resp = false;
@@ -139,6 +144,9 @@ class Producto
         return $resp;
     }
 
+        /**
+     * recibe una consulta SQL del tipo DELETE
+    */
     public function eliminar()
     {
         $resp = false;
@@ -156,6 +164,9 @@ class Producto
         return $resp;
     }
 
+        /**
+     * es como un select con una condición, devuelve el arreglo de esa consulta o null
+    */
     public static function listar($parametro = "")
     {
         $arreglo = array();
@@ -181,6 +192,32 @@ class Producto
         }
 
         return $arreglo;
+    }
+
+    /**
+     * recibe un id como parametro y ejecuta la consulta del SELECT buscando lo que coincida con la informacion
+    */
+    public function buscar($idProducto)
+    {
+        $base = new BaseDatos();
+        $consulta = "SELECT * FROM producto WHERE idproducto = " . $idProducto;
+        $resp = false;
+        if ($base->Iniciar()) {
+            if ($base->Ejecutar($consulta)) {
+                if ($row = $base->Registro()) {
+                    $this->cargar($row['idproducto'], 
+                    $row['pronombre'], 
+                    $row['prodetalle'], 
+                    $row['procantstock']);
+                    $resp = true;
+                }
+            } else {
+                self::setmensajeoperacion($base->getError());
+            }
+        } else {
+            self::setmensajeoperacion($base->getError());
+        }
+        return $resp;
     }
     
 

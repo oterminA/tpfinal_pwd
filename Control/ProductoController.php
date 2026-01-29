@@ -1,11 +1,12 @@
 <?php
+//estos scripts permiten acceder al orm y entregarle informacion a las paginas de la interfaz
+//acá trabajo con objetos y claves-valor porque no estoy sacando la información directamente de la fuente porque el control es un intermediario, a diferencia de la capa del modelo
 class ProductoController
 {
     /**
-     * Espera como parametro un arreglo asociativo donde las claves coinciden con los nombres de las variables instancias del objeto crea al objeto completo y necesita toda la informacion. Lo uso más que nada para dar altas o modificar
+     * Espera como parametro un arreglo asociativo donde las claves coinciden con los nombres de las variables instancias del objeto
+     * crea al objeto completo y necesita toda la informacion. Lo uso más que nada para dar altas o modificar
      * retorna el objeto que se arma a partir de los parametros
-     * @param array $param
-     * @return Producto
      */
     private function cargarObjeto($param)
     {
@@ -19,10 +20,10 @@ class ProductoController
         return $obj;
     }
 
+
     /**
-     * Espera como parametro un arreglo asociativo donde las claves coinciden con los nombres de las variables instancias del objeto que son claves
-     * @param array $param
-     * @return Producto
+    * Espera como parametro un arreglo asociativo donde las claves coinciden con los nombres de las variables instancias del objeto que son claves
+     * retorna el objeto creado pero solo necesitando su id, no necesita el resto de la info. Lo uso más que nada para dar bajas, verificar que exista el objeto solo buscando su id, donde no preciso del resto de los datos
      */
     private function cargarObjetoConClave($param)
     {
@@ -38,10 +39,7 @@ class ProductoController
 
     /**
      * Corrobora que dentro del arreglo asociativo estan seteados los campos claves
-     * @param array $param
-     * @return boolean
      */
-
     private function seteadosCamposClaves($param)
     {
         $resp = false;
@@ -51,8 +49,7 @@ class ProductoController
     }
 
     /**
-     * 
-     * @param array $param
+     *genera un INSERT basicamente, de lo pasado por parametro, o sea necesita de la funcion insertar() del modelo
      */
     public function alta($param)
     {
@@ -67,9 +64,7 @@ class ProductoController
 
 
     /**
-     * permite eliminar un objeto 
-     * @param array $param
-     * @return boolean
+     *permite eliminar un objeto mediante su ID usando una funcion que está en la capa de modelo
      */
     public function baja($param)
     {
@@ -85,9 +80,7 @@ class ProductoController
     }
 
     /**
-     * permite modificar un objeto
-     * @param array $param
-     * @return boolean
+     * permite modificar un objeto por la info que llega por paramentro, se ejecuta la funcion de la capa del modelo
      */
     public function modificacion($param)
     {
@@ -102,10 +95,10 @@ class ProductoController
         return $resp;
     }
 
+    
     /**
-     * permite buscar un objeto
-     * @param array $param
-     * @return boolean
+    * permite Buscar un objeto usando info que entra por parametro y acá tengo que usarlo así porque no puedo acceder directamente a la info sino que tengo q pasar por el modelo
+     * usa una función que viene desde el modelo
      */
     public function buscar($param)
     {

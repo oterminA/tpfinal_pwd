@@ -1,4 +1,5 @@
 <?php
+//el modelo consulta directamente con la base de datos y le puede llegar a pasar info al control
 class Usuario{
     private $idUsuario;
     private $nombre;
@@ -90,6 +91,9 @@ class Usuario{
         return $resp;
     }
 
+        /**
+     * crea una cadena SQL que corresponde a un INSERT
+    */
     public function insertar()
     {
         $resp = false;
@@ -116,6 +120,9 @@ class Usuario{
         return $resp;
     }
 
+        /**
+     *se crea una consulta SQL del tipo UPDATE
+    */
     public function modificar()
     {
         $resp = false;
@@ -140,7 +147,9 @@ class Usuario{
         return $resp;
     }
     
-
+    /**
+     * recibe una consulta SQL del tipo DELETE
+    */
     public function eliminar()
     {
         $resp = false;
@@ -159,6 +168,9 @@ class Usuario{
         return $resp;
     }
 
+        /**
+     * es como un select con una condición, devuelve el arreglo de esa consulta o null
+    */
     public static function listar($parametro = "") //NO MODIFICAR EL PARAMETRO PORQUE SE ROMPEN COSASSSSS
     {
         $arreglo = [];
@@ -188,8 +200,9 @@ class Usuario{
         return $arreglo;
     }
     
-
-
+    /**
+     * recibe un id como parametro y ejecuta la consulta del SELECT buscando lo que coincida con la informacion
+    */
     public function buscar($idUsuario)
     {
         $base = new BaseDatos();

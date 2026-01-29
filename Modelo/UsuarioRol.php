@@ -1,6 +1,5 @@
-
 <?php
-
+//el modelo consulta directamente con la base de datos y le puede llegar a pasar info al control
 class UsuarioRol{
     private $id;
     private $objRol;//delegacion x la relacion n:m
@@ -74,6 +73,9 @@ class UsuarioRol{
         return $resp;
     }
 
+        /**
+     * recibe un id como parametro y ejecuta la consulta del SELECT buscando lo que coincida con la informacion
+    */
     public function buscar($id){
         $base = new BaseDatos();
         $sql = "SELECT * FROM usuariorol WHERE idusuario = " . $id;
@@ -93,6 +95,9 @@ class UsuarioRol{
         return $resp;
     } 
 
+        /**
+     * crea una cadena SQL que corresponde a un INSERT
+    */
     public function insertar()
     {
         $resp = false;
@@ -118,6 +123,9 @@ class UsuarioRol{
         return $resp;
     }
 
+        /**
+     *se crea una consulta SQL del tipo UPDATE
+    */
     public function modificar()
     {
         $resp = false;
@@ -145,6 +153,9 @@ class UsuarioRol{
         return $resp;
     }
 
+        /**
+     * recibe una consulta SQL del tipo DELETE
+    */
     public function eliminar()
     {
         $resp = false;
@@ -163,6 +174,9 @@ class UsuarioRol{
         return $resp;
     }
 
+        /**
+     * es como un select con una condición, devuelve el arreglo de esa consulta o null
+    */
     public static function listar($parametro = "")
     {
         $arreglo = array();

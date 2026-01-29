@@ -48,7 +48,7 @@
                         echo '<td>' . $objUser->getMail() . '</td>';
                         echo '<td>' . $estado . '</td>';
                         echo '<td>';
-                        echo '<a class="btn btn-primary btn-accion" href="../Vista/actualizarUsuario.php?idusuario=' . $objUser->getIdUsuario() . '">Actualizar</a>';
+                        echo '<a class="btn btn-primary btn-accion" href="../Vista/actualizarUsuario.php?idusuario=' . $objUser->getIdUsuario() . '">Actualizar datos</a>';
                         echo '<a class="btn btn-danger btn-accion" href="../Vista/Action/eliminarLogin.php?idusuario=' . $objUser->getIdUsuario() . '">Deshabilitar</a>';
                         echo '<a class="btn btn-secondary btn-accion" href="../Vista/Action/habilitarLogin.php?idusuario=' . $objUser->getIdUsuario() . '">Habilitar</a>';
                         echo '</td>';

@@ -1,4 +1,5 @@
 <?php
+//el modelo consulta directamente con la base de datos y le puede llegar a pasar info al control
 //hay delegación
 class Menu
 {
@@ -112,7 +113,9 @@ class Menu
         return $resp;
     }
 
-
+    /**
+     * crea una cadena SQL que corresponde a un INSERT
+    */
     public function insertar()
     {
         $resp = false;
@@ -141,7 +144,9 @@ class Menu
     }
 
 
-
+    /**
+     *se crea una consulta SQL del tipo UPDATE
+    */
     public function modificar()
     {
         $resp = false;
@@ -166,7 +171,9 @@ class Menu
         return $resp;
     }
 
-
+    /**
+     * recibe una consulta SQL del tipo DELETE
+    */
     public function eliminar()
     {
         $resp = false;
@@ -185,7 +192,9 @@ class Menu
         return $resp;
     }
 
-
+    /**
+     * es como un select con una condición, devuelve el arreglo de esa consulta o null
+    */
     public static function listar($parametro = "")
     {
         $arreglo = array();
@@ -220,6 +229,39 @@ class Menu
         }
 
         return $arreglo;
+    }
+
+        /**
+     * recibe un id como parametro y ejecuta la consulta del SELECT buscando lo que coincida con la informacion
+    */
+    public function buscar($idMenu)
+    {
+        $base = new BaseDatos();
+        $consulta = "SELECT * FROM menu WHERE idmenu = " . $idMenu;
+        $resp = false;
+        if ($base->Iniciar()) {
+            if ($base->Ejecutar($consulta)) {
+                if ($row = $base->Registro()) {
+                    $objmenupadre = new Menu();
+                    $objmenupadre->setIdMenu($row['idmenu']);
+                    $objmenupadre->cargar();
+
+                    $this->cargar(
+                        $row['idmenu'],
+                        $row['menombre'],
+                        $row['medescripcion'],
+                        $objmenupadre,
+                        $row['medeshabilitado'],
+                    );
+                    $resp = true;
+                }
+            } else {
+                self::setmensajeoperacion($base->getError());
+            }
+        } else {
+            self::setmensajeoperacion($base->getError());
+        }
+        return $resp;
     }
 
 

@@ -1,4 +1,5 @@
 <?php
+//el modelo consulta directamente con la base de datos y le puede llegar a pasar info al control
 //hay delegación
 class CompraEstado
 {
@@ -114,7 +115,9 @@ class CompraEstado
         return $resp;
     }
 
-
+    /**
+     * crea una cadena SQL que corresponde a un INSERT
+    */
     public function insertar()
     {
         $resp = false;
@@ -142,7 +145,9 @@ class CompraEstado
     }
 
 
-
+    /**
+     *se crea una consulta SQL del tipo UPDATE
+    */
     public function modificar()
     {
         $resp = false;
@@ -166,7 +171,9 @@ class CompraEstado
         return $resp;
     }
 
-
+    /**
+     * recibe una consulta SQL del tipo DELETE
+    */
     public function eliminar()
     {
         $resp = false;
@@ -185,12 +192,14 @@ class CompraEstado
         return $resp;
     }
 
-
+    /**
+     * es como un select con una condición, devuelve el arreglo de esa consulta o null
+    */
     public static function listar($parametro = "")
     {
         $arreglo = array();
         $base = new BaseDatos();
-        $sql = "SELECT * FROM compra ";
+        $sql = "SELECT * FROM compraestado ";
         if ($parametro != "") {
             $sql .= 'WHERE ' . $parametro;
         }
@@ -217,6 +226,37 @@ class CompraEstado
         }
 
         return $arreglo;
+    }
+
+        /**
+     * recibe un id como parametro y ejecuta la consulta del SELECT buscando lo que coincida con la informacion
+    */
+    public function buscar($idCompraEstado)
+    {
+        $base = new BaseDatos();
+        $consulta = "SELECT * FROM compraestado WHERE idcompraestado = " . $idCompraEstado;
+        $resp = false;
+        if ($base->Iniciar()) {
+            if ($base->Ejecutar($consulta)) {
+                if ($row = $base->Registro()) {
+                    $objcompra = new Compra();
+                    $objcompra->setIdCompra($row['idcompra']);
+                    $objcompra->cargar();
+
+                    $objcet = new CompraEstadoTipo();
+                    $objcet->setIdCompraEstadoTipo($row['idcompraestadotipo']);
+                    $objcet->cargar();                    
+
+                    $this->cargar($row['idcompraestado'], $objcompra, $objcet, $row['cefechaini'], $row['cefechafin']);
+                    $resp = true;
+                }
+            } else {
+                self::setmensajeoperacion($base->getError());
+            }
+        } else {
+            self::setmensajeoperacion($base->getError());
+        }
+        return $resp;
     }
 
 

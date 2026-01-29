@@ -1,4 +1,5 @@
 <?php
+//el modelo consulta directamente con la base de datos y le puede llegar a pasar info al control
 class CompraEstadoTipo
 {
     private $idcompraestadotipo;
@@ -81,6 +82,9 @@ class CompraEstadoTipo
         return $resp;
     }
 
+        /**
+     * crea una cadena SQL que corresponde a un INSERT
+    */
     public function insertar()
     {
         $resp = false;
@@ -103,6 +107,9 @@ class CompraEstadoTipo
         return $resp;
     }
 
+        /**
+     *se crea una consulta SQL del tipo UPDATE
+    */
     public function modificar()
     {
         $resp = false;
@@ -124,7 +131,9 @@ class CompraEstadoTipo
         return $resp;
     }
 
-
+    /**
+     * recibe una consulta SQL del tipo DELETE
+    */
     public function eliminar()
     {
         $resp = false;
@@ -142,7 +151,9 @@ class CompraEstadoTipo
         return $resp;
     }
 
-
+    /**
+     * es como un select con una condición, devuelve el arreglo de esa consulta o null
+    */
     public static function listar($parametro = "")
     {
         $arreglo = array();
@@ -168,6 +179,31 @@ class CompraEstadoTipo
         }
 
         return $arreglo;
+    }
+
+        /**
+     * recibe un id como parametro y ejecuta la consulta del SELECT buscando lo que coincida con la informacion
+    */
+    public function buscar($idCompraEstado)
+    {
+        $base = new BaseDatos();
+        $consulta = "SELECT * FROM compraestadotipo WHERE idcompraestadotipo = " . $idCompraEstado;
+        $resp = false;
+        if ($base->Iniciar()) {
+            if ($base->Ejecutar($consulta)) {
+                if ($row = $base->Registro()) {
+                    $this->cargar($row['idcompraestadotipo'], 
+                    $row['cetdescripcion'], 
+                    $row['cetdetalle']);
+                    $resp = true;
+                }
+            } else {
+                self::setmensajeoperacion($base->getError());
+            }
+        } else {
+            self::setmensajeoperacion($base->getError());
+        }
+        return $resp;
     }
     
 

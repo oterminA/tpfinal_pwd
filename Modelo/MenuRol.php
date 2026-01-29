@@ -1,4 +1,5 @@
 <?php
+//el modelo consulta directamente con la base de datos y le puede llegar a pasar info al control
 //hay delegación
 class menurol
 {
@@ -89,7 +90,9 @@ class menurol
         return $resp;
     }
 
-
+    /**
+     * crea una cadena SQL que corresponde a un INSERT
+    */
     public function insertar()
     {
         $resp = false;
@@ -115,7 +118,9 @@ class menurol
     }
 
 
-
+    /**
+     *se crea una consulta SQL del tipo UPDATE
+    */
     public function modificar()
     {
         $resp = false;
@@ -137,7 +142,9 @@ class menurol
         return $resp;
     }
 
-
+    /**
+     * recibe una consulta SQL del tipo DELETE
+    */
     public function eliminar()
     {
         $resp = false;
@@ -156,12 +163,14 @@ class menurol
         return $resp;
     }
 
-
+    /**
+     * es como un select con una condición, devuelve el arreglo de esa consulta o null
+    */
     public static function listar($parametro = "")
     {
         $arreglo = array();
         $base = new BaseDatos();
-        $sql = "SELECT * FROM compra ";
+        $sql = "SELECT * FROM menurol ";
         if ($parametro != "") {
             $sql .= 'WHERE ' . $parametro;
         }
@@ -188,6 +197,36 @@ class menurol
         }
 
         return $arreglo;
+    }
+
+    /**
+     * recibe un id como parametro y ejecuta la consulta del SELECT buscando lo que coincida con la informacion
+    */
+    public function buscar($idMenuRol)
+    {
+        $base = new BaseDatos();
+        $consulta = "SELECT * FROM menurol WHERE idmenurol = " . $idMenuRol;
+        $resp = false;
+        if ($base->Iniciar()) {
+            if ($base->Ejecutar($consulta)) {
+                if ($row = $base->Registro()) {
+                    $objmenu = new Menu();
+                    $objmenu->setIdMenu($row['idmenu']);
+                    $objmenu->cargar();
+
+                    $objrol = new Rol();
+                    $objrol->setIdRol($row['idrol']);
+                    $objrol->cargar();
+                    $this->cargar($row['idmenurol'], $objmenu, $objrol);
+                    $resp = true;
+                }
+            } else {
+                self::setmensajeoperacion($base->getError());
+            }
+        } else {
+            self::setmensajeoperacion($base->getError());
+        }
+        return $resp;
     }
 
 
