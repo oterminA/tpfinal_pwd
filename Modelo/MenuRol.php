@@ -1,7 +1,8 @@
 <?php
 //el modelo consulta directamente con la base de datos y le puede llegar a pasar info al control
 //hay delegación
-class menurol
+//creo que esto representa la delacion de una opcion del menú y un rol, por ej, el rol 'admin' tiene una opcion de menú que es 'stock'
+class MenuRol
 {
     private $idmenurol;
     private $objmenu; //ref a clase menu
@@ -99,7 +100,6 @@ class menurol
         $base = new BaseDatos();
         $sql = "INSERT INTO menurol(idmenu, idrol)
         VALUES (
-            '',
             '" . $this->getObjMenu()->getIdMenu() . "',
             '" . $this->getObjRol()->getIdRol() . "'
         )";
@@ -126,9 +126,10 @@ class menurol
         $resp = false;
         $base = new BaseDatos();
         $sql = "UPDATE menurol SET
-            idmenu = '" . $this->getObjMenu()->getIdMenu() . "',
-            idrol = '" . $this->getObjRol()->getIdRol() . "',
+        idmenu = '" . $this->getObjMenu()->getIdMenu() . "',
+        idrol = '" . $this->getObjRol()->getIdRol() . "'
         WHERE idmenurol = '" . $this->getIdMenuRol() . "'";
+
 
         if ($base->Iniciar()) {
             if ($base->Ejecutar($sql)) {
@@ -198,6 +199,40 @@ class menurol
 
         return $arreglo;
     }
+
+    /**
+     * esta funcion lista la info de un id rol, o sea el menú que el id q entra por parametro puede ver
+     * la hice estática porque la funcion listar lo es(?)
+    */
+    public static function listarPorRol($idRol)
+{
+    $arreglo = [];
+    $base = new BaseDatos();
+
+    $sql = "SELECT * 
+        FROM menurol 
+        WHERE idrol = " . $idRol . " 
+        AND deshabilitado = 0";
+
+
+    if ($base->Iniciar()) {
+        if ($base->Ejecutar($sql)) {
+            while ($row = $base->Registro()) {
+                $menu = new Menu();
+                $menu->setear(
+                    $row['idmenu'],
+                    $row['menombre'],
+                    $row['medescripcion'], //no olvidar que cada new de menú es una opcion del mismo, por ej 'productos'
+                    null,
+                    $row['medeshabilitado'] 
+                );
+                $arreglo[] = $menu;
+            }
+        }
+    }
+    return $arreglo;
+}
+
 
     /**
      * recibe un id como parametro y ejecuta la consulta del SELECT buscando lo que coincida con la informacion

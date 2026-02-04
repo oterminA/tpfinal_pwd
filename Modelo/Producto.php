@@ -6,6 +6,8 @@ class Producto
     private $pronombre;
     private $prodetalle;
     private $procantstock;
+    private $proprecio;
+    private $prodeshabilitado;
     private $mensajeBD; 
 
 
@@ -15,6 +17,8 @@ class Producto
         $this->pronombre = "";
         $this->prodetalle = "";
         $this->procantstock = "";
+        $this->proprecio = "";
+        $this->prodeshabilitado = "";
         $this->mensajeBD = "";
     }
 
@@ -33,6 +37,14 @@ class Producto
     public function getStockProducto()
     {
         return $this->procantstock;
+    }
+    public function getPrecioProducto()
+    {
+        return $this->proprecio;
+    }
+    public function getProductoDeshabilitado()
+    {
+        return $this->prodeshabilitado;
     }
     public function getmensajeoperacion()
     {
@@ -56,17 +68,27 @@ class Producto
     {
         $this->procantstock = $procantstock;
     }
+    public function setPrecioProducto($proprecio)
+    {
+        $this->proprecio = $proprecio;
+    }
+    public function setProductoDeshabilitado($prodeshabilitado)
+    {
+        $this->prodeshabilitado = $prodeshabilitado;
+    }
     public function setmensajeoperacion($mensajeBD)
     {
         $this->mensajeBD = $mensajeBD;
     }
 
-    public function setear($idproducto, $pronombre, $prodetalle, $procantstock)
+    public function setear($idproducto, $pronombre, $prodetalle, $procantstock, $proprecio, $prodeshabilitado)
     {
         $this->setIdProducto($idproducto);
         $this->setNombreProducto($pronombre);
         $this->setDetalleProducto($prodetalle);
         $this->setStockProducto($procantstock);
+        $this->setPrecioProducto($proprecio);
+        $this->setProductoDeshabilitado($prodeshabilitado);
     }
 
 
@@ -83,7 +105,8 @@ class Producto
                     $this->setear($row['idproducto'], 
                     $row['pronombre'], 
                     $row['prodetalle'], 
-                    $row['procantstock']);
+                    $row['procantstock'], 
+                    $row['proprecio'],$row['prodeshabilitado']);
                     $resp = true;
                 }
             }
@@ -100,11 +123,14 @@ class Producto
     {
         $resp = false;
         $base = new BaseDatos();
-        $sql = "INSERT INTO producto(pronombre, prodetalle, procantstock)  
-        VALUES('', 
+        $sql = "INSERT INTO producto(pronombre, prodetalle, procantstock, proprecio, prodeshabilitado)  
+        VALUES(
         '" . $this->getNombreProducto() . "', 
         '" . $this->getDetalleProducto() . "', 
-        '" . $this->getStockProducto() . "')";
+        '" . $this->getStockProducto() . "', 
+        " . ($this->getPrecioProducto() !== null ? "'" . $this->getPrecioProducto() . "'" : "NULL") . ", 
+        " . ($this->getProductoDeshabilitado() !== null ? "'" . $this->getProductoDeshabilitado() . "'" : "NULL") . ")";
+
 
         if ($base->Iniciar()) {
             if ($laidproducto = $base->Ejecutar($sql)) {
@@ -129,7 +155,10 @@ class Producto
         $sql = "UPDATE producto 
         SET pronombre='" . $this->getNombreProducto() . "', 
             prodetalle='" . $this->getDetalleProducto() . "', 
-            procantstock='" . $this->getStockProducto() . "'
+            procantstock='" . $this->getStockProducto() . "',
+            proprecio='" . $this->getPrecioProducto() . "',
+            prodeshabilitado='" . $this->getProductoDeshabilitado() . "'
+
         WHERE idproducto='" . $this->getIdProducto() . "'";
 
         if ($base->Iniciar()) {
@@ -183,7 +212,7 @@ class Producto
                     $obj->setear($row['idproducto'], 
                     $row['pronombre'], 
                     $row['prodetalle'], 
-                    $row['procantstock']);
+                    $row['procantstock'],  $row['proprecio'],$row['prodeshabilitado']);
                     array_push($arreglo, $obj);
                 }
             }
@@ -208,7 +237,7 @@ class Producto
                     $this->cargar($row['idproducto'], 
                     $row['pronombre'], 
                     $row['prodetalle'], 
-                    $row['procantstock']);
+                    $row['procantstock'],  $row['proprecio'],$row['prodeshabilitado']);
                     $resp = true;
                 }
             } else {
@@ -228,7 +257,9 @@ class Producto
             "ID producto: " . $this->getIdProducto() . "\n" .
             "Nombre producto: " . $this->getNombreProducto() . "\n" .
             "Detalle producto: " . $this->getDetalleProducto() . "\n" .
-            "Stock producto: " . $this->getStockProducto() ;
+            "Stock producto: " . $this->getStockProducto() . "\n" .
+            "Precio producto: $" . $this->getPrecioProducto() . "\n" .
+            "Producto deshabilitado: " . $this->getProductoDeshabilitado() . "\n" ;
         return $mensaje;
     }
 }

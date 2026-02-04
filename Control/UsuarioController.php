@@ -52,18 +52,18 @@ class UsuarioController{
     public function alta($param)
     {
         $resp = false;
-        // $elObjtUsuario = $this->cargarObjeto($param);
-        // //        verEstructura($elObjtUsuario);
-        // if ($elObjtUsuario != null and $elObjtUsuario->insertar()) {
-        //     $resp = true;
-        // }
-        // return $resp;
-    $elObjtUsuario = $this->cargarObjeto($param);
+        $elObjtUsuario = $this->cargarObjeto($param);
+        //        verEstructura($elObjtUsuario);
+        if ($elObjtUsuario != null and $elObjtUsuario->insertar()) {
+            $resp = true;
+        }
+        return $resp;
+    // $elObjtUsuario = $this->cargarObjeto($param);
 
-    if ($elObjtUsuario != null && $elObjtUsuario->insertar()) {
-        $resp= $elObjtUsuario->getIdUsuario();
-    }
-    return false;
+    // if ($elObjtUsuario != null && $elObjtUsuario->insertar()) {
+    //     $resp= $elObjtUsuario->getIdUsuario();
+    // }
+    // return false;
 }
     
     /**

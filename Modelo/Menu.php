@@ -1,13 +1,14 @@
 <?php
 //el modelo consulta directamente con la base de datos y le puede llegar a pasar info al control
 //hay delegación
+//creo que esta clase representaría UNA opcion del menú, por ejemplo "contacto"
 class Menu
 {
     private $idmenu;
     private $menombre;
-    private $medescripcion;
-    private $objmenupadre; //referencia a menu padre?
-    private $medeshabilitado;
+    private $medescripcion; //cada new de menú es una opcion del mismo, por ej 'inicio'
+    private $objmenupadre; //referencia a menu padre? creo que no, me parece q es algo de recursividad "es una relación recursiva de la entidad menú consigo misma, que permite modelar submenús"
+    private $medeshabilitado; //esto está acá por si el admin decide deshabilitar una opción, por ejemplo se hace la seccion '2x1' para la temporada de verano y eso después que pase el tiempo puede deshabilitarse por el admin
     private $mensajeBD;
 
 
@@ -115,20 +116,20 @@ class Menu
 
     /**
      * crea una cadena SQL que corresponde a un INSERT
-    */
+     */
     public function insertar()
     {
         $resp = false;
         $base = new BaseDatos();
-        $sql = "INSERT INTO menu( menombre, medescripcion, idpadre, medeshabilitado)
-        VALUES (
-            '
-            ',
-            '" . $this->getNombreMenu() . "',
-            '" . $this->getMenuDescripcion() . "',
-            '" . $this->getObjMenuPadre()->getIdMenu() . "',
-            '" . $this->getDeshabilitado() . "'
-        )";
+        $idpadre = $this->getObjMenuPadre() != null ? "'" . $this->getObjMenuPadre()->getIdMenu() . "'" : "NULL";
+
+        $sql = "INSERT INTO menu(menombre, medescripcion, idpadre, medeshabilitado)
+    VALUES (
+        '" . $this->getNombreMenu() . "',
+        '" . $this->getMenuDescripcion() . "',
+        " . $idpadre . ",
+        " . ($this->getDeshabilitado() != null ? "'" . $this->getDeshabilitado() . "'" : "NULL") . "
+    )";
 
         if ($base->Iniciar()) {
             if ($elidmenu = $base->Ejecutar($sql)) {
@@ -146,7 +147,7 @@ class Menu
 
     /**
      *se crea una consulta SQL del tipo UPDATE
-    */
+     */
     public function modificar()
     {
         $resp = false;
@@ -155,7 +156,7 @@ class Menu
             menombre = '" . $this->getNombreMenu() . "',
             medescripcion = '" . $this->getMenuDescripcion() . "',
             idpadre = '" . $this->getObjMenuPadre()->getIdMenu() . "',
-            medeshabilitado = '" . $this->getDeshabilitado() . "',
+            medeshabilitado = '" . $this->getDeshabilitado() . "'
         WHERE idmenu = '" . $this->getIdMenu() . "'";
 
 
@@ -173,7 +174,7 @@ class Menu
 
     /**
      * recibe una consulta SQL del tipo DELETE
-    */
+     */
     public function eliminar()
     {
         $resp = false;
@@ -194,7 +195,7 @@ class Menu
 
     /**
      * es como un select con una condición, devuelve el arreglo de esa consulta o null
-    */
+     */
     public static function listar($parametro = "")
     {
         $arreglo = array();
@@ -231,9 +232,9 @@ class Menu
         return $arreglo;
     }
 
-        /**
+    /**
      * recibe un id como parametro y ejecuta la consulta del SELECT buscando lo que coincida con la informacion
-    */
+     */
     public function buscar($idMenu)
     {
         $base = new BaseDatos();
@@ -273,7 +274,7 @@ class Menu
             "Menú nombre: " . $this->getNombreMenu() . "\n" .
             "Menú descripcion: " . $this->getMenuDescripcion() . "\n" .
             "Datos menú padre----\n" . $this->getIdMenu() . "\n" .
-            "Menú deshabilitado: " . $this->getMenuDescripcion() . "\n" ;
+            "Menú deshabilitado: " . $this->getMenuDescripcion() . "\n";
         return $mensaje;
     }
 }

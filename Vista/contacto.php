@@ -11,16 +11,29 @@
 </head>
 
 <body>
-<?php include_once '../Vista/estructura/header.php' ;?>
+    <?php include_once '../Vista/estructura/header.php'; ?>
 
     <div id="wrapper">
-        
+        <h3>Envianos un mensaje</h3>
+        <form action="#">
+            <div class="form-floating">
+                <label>Correo electrónico</label>
+                <input type="email" class="form-control" id="email">
+            </div>
+            <div class="form-floating">
+                <input type="text" class="form-control" id="nombre">
+                <label>Nombre y apellido</label>
+            </div>
+            <div class="form-floating">
+                <label>Comentario</label>
+                <textarea class="form-control" id="msg"></textarea>
+            </div>
+        </form>
     </div>
-
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.3/dist/jquery.validate.min.js"></script>
-    <?php include_once '../Vista/estructura/footer.php' ;?>
+    <?php include_once '../Vista/estructura/footer.php'; ?>
 
 </body>
 

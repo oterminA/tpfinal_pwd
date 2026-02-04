@@ -14,24 +14,27 @@ class ProductoController
 
         if (isset($param['pronombre']) && isset($param['prodetalle']) && isset($param['procantstock'])) {
             $id = $param['idproducto'] ?? null; // si no existe ese id null porque en realidad acá no viene xq es autoincremental
+            $precio = $param['proprecio'] ?? null;
+            $deshabilitado = $param['prodeshabilitado'] ?? null; 
+
             $obj = new Producto();
-            $obj->setear($id, $param['pronombre'], $param['prodetalle'], $param['procantstock']);
+            $obj->setear($id, $param['pronombre'], $param['prodetalle'], $param['procantstock'], $precio, $deshabilitado);
         }
         return $obj;
     }
 
 
     /**
-    * Espera como parametro un arreglo asociativo donde las claves coinciden con los nombres de las variables instancias del objeto que son claves
+     * Espera como parametro un arreglo asociativo donde las claves coinciden con los nombres de las variables instancias del objeto que son claves
      * retorna el objeto creado pero solo necesitando su id, no necesita el resto de la info. Lo uso más que nada para dar bajas, verificar que exista el objeto solo buscando su id, donde no preciso del resto de los datos
      */
     private function cargarObjetoConClave($param)
     {
         $obj = null;
 
-        if (isset($param['idproducto'])) { 
+        if (isset($param['idproducto'])) {
             $obj = new Producto();
-            $obj->setear($param['idproducto'], null, null, null);
+            $obj->setear($param['idproducto'], null, null, null, null, null);
         }
         return $obj;
     }
@@ -43,7 +46,7 @@ class ProductoController
     private function seteadosCamposClaves($param)
     {
         $resp = false;
-        if (isset($param['idproducto'])) 
+        if (isset($param['idproducto']))
             $resp = true;
         return $resp;
     }
@@ -95,9 +98,9 @@ class ProductoController
         return $resp;
     }
 
-    
+
     /**
-    * permite Buscar un objeto usando info que entra por parametro y acá tengo que usarlo así porque no puedo acceder directamente a la info sino que tengo q pasar por el modelo
+     * permite Buscar un objeto usando info que entra por parametro y acá tengo que usarlo así porque no puedo acceder directamente a la info sino que tengo q pasar por el modelo
      * usa una función que viene desde el modelo
      */
     public function buscar($param)
@@ -112,6 +115,10 @@ class ProductoController
                 $where .= " AND prodetalle ='" . $param['prodetalle'] . "'";
             if (isset($param['procantstock']))
                 $where .= " AND procantstock ='" . $param['procantstock'] . "'";
+            if (isset($param['proprecio']))
+                $where .= " AND proprecio ='" . $param['proprecio'] . "'";
+            if (isset($param['prodeshabilitado']))
+                $where .= " AND prodeshabilitado ='" . $param['prodeshabilitado'] . "'";
         }
         $arreglo = Producto::listar($where);
         return $arreglo;

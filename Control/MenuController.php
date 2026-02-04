@@ -9,21 +9,35 @@ class MenuController
     private function cargarObjeto($param)
     {
         $obj = null;
-        if (isset($param['menombre']) && isset($param['medescripcion']) && isset($param['idpadre']) && isset($param['medeshabilitado'])) {
-
-            $id = $param['idmenu'] ?? null; // si no existe ese id null porque en realidad acá no viene xq es autoincremental
-
-            $objMenu = new Menu();
-            $objMenu->setIdMenu($param['idmenu']);
-
-            if ($objMenu->cargar()) {
-                $obj = new Menu();
-                $obj->setear($id, $param['menombre'], $param['medescripcion'], $objMenu, $param['medeshabilitado']);
+        if (isset($param['menombre']) && isset($param['medescripcion'])) { //tengo que poner esto solamente porque acá entran dos posibles null que son idpadre y medeshabilitado entonces rompe el if
+            
+            $id = $param['idmenu'] ?? null; //porque el id es autoincremental
+            
+            $objMenuPadre = null; //por si idpadre es null
+            if (array_key_exists('idpadre', $param) && $param['idpadre'] != null) {
+                $objMenuPadre = new Menu(); //hago como un new de menu para despues pasar los datos
+                $objMenuPadre->setIdMenu($param['idpadre']);
+                if (!$objMenuPadre->cargar()) {
+                    $objMenuPadre = null; 
+                }
             }
+            
+            $medeshabilitado = array_key_exists('medeshabilitado', $param) ? $param['medeshabilitado'] : null; //por si deshabilitado es null q puede pasar
+            
+            $obj = new Menu();
+            $obj->setear(
+                $id, 
+                $param['menombre'], 
+                $param['medescripcion'], 
+                $objMenuPadre, 
+                $medeshabilitado
+            );
         }
+        
         return $obj;
     }
 
+    //!!!!!!!
 
     /**
      * Espera como parametro un arreglo asociativo donde las claves coinciden con los nombres de las variables instancias del objeto que son claves

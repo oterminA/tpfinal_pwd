@@ -1,17 +1,4 @@
-<?php
-    include_once '../util/funciones.php';
-    $sesion = new Session();
-
-    if (!$sesion->validar()) {
-        header('Location: ../login.php');
-        exit;
-    }
-    $abmUsuario = new UsuarioController();
-    $arrayUsers = $abmUsuario->listar();
-    include_once '../Vista/estructura/header.php' ;
-    ?>
-    
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="es">
 
 <head>
@@ -23,7 +10,18 @@
 </head>
 
 <body>
+<!-- <?php
+    include_once '../util/funciones.php';
+    $sesion = new Session();
 
+    if (!$sesion->validar()) {
+        header('Location: ../login.php');
+        exit;
+    }
+    $abmUsuario = new UsuarioController();
+    $arrayUsers = $abmUsuario->listar();
+    include_once '../Vista/estructura/header.php' ;
+    ?> -->
     <div class="container mt-5" id="wrapper">
         <h2>Lista de Usuarios</h2>
         <table class="table table-striped">
