@@ -11,8 +11,9 @@
 </head>
 
 <?php
-include_once '../Vista/estructura/header.php';
+include_once '../../estructura/header.php'; 
 include_once '../util/funciones.php';
+?>
 
 $objUser = null;
 
@@ -50,9 +51,7 @@ if (isset($_GET['idusuario'])) {
             </div>
         </form>
     </div>
-    <?php
-include_once '../Vista/estructura/footer.php';
-?>
+<?php include_once '../../estructura/footer.php'; ?>
 </body>
 
 </html>

@@ -10,7 +10,7 @@
 </head>
 
 <body>
-<!-- <?php
+<?php
     include_once '../util/funciones.php';
     $sesion = new Session();
 
@@ -20,8 +20,8 @@
     }
     $abmUsuario = new UsuarioController();
     $arrayUsers = $abmUsuario->listar();
-    include_once '../Vista/estructura/header.php' ;
-    ?> -->
+    include_once '../../estructura/header.php'; ?>
+
     <div class="container mt-5" id="wrapper">
         <h2>Lista de Usuarios</h2>
         <table class="table table-striped">
@@ -63,7 +63,8 @@
 <a class="btn btn-warning w-25" href="../Vista/Action/cerrarSesion.php">Cerrar sesión</a>
         </div>
     </div>
-    <?php include_once '../Vista/estructura/footer.php' ;?>
+    <?php include_once '../../estructura/footer.php'; ?>
+
 
 </body>
 

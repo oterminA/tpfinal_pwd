@@ -1,0 +1,2 @@
+//acá voy a poner las lineas de codigo que tengan que ver con jquery para ajax o algo así
+//este script tiene que ir en todos los scripts html, abajo, en el body y después del que tiene el codigo de jquery posta 

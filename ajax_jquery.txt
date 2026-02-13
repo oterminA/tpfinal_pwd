@@ -1,0 +1,72 @@
+//se usa solo en codigo js
+//flujo: usuario hace clic → evento JS captura el clic → AJAX envía petición al servidor → PHP procesa (consulta BD, etc.) → PHP devuelve respuesta → JS recibe la respuesta → JS actualiza el DOM (HTML visible)
+
+
+*****************************estructura
+$.ajax({
+    data: parametros,      // datos a enviar, pueden ser clave-valor, creo
+    url: 'action.php',     // archivo PHP destino
+    type: 'POST',          // método (POST o GET)
+    
+    beforeSend: function() {
+        // antes de enviar
+    },
+    
+    success: function(respuesta) {
+        // cuando funciona
+    },
+    
+    error: function() {
+        // si falla
+    }
+});
+
+*****************************selectores
+$('#mostrar')           // Por ID: <div id="mostrar">
+$('.clase')             // Por clase: <div class="clase">
+$('button')             // Por etiqueta: <button>
+$('#nombre').val()      // Obtener valor de input
+$('#mostrar').html(msj) // Cambiar contenido de un div
+
+*****************************capturar eventos
+$('#boton').click(function() {
+    // hacer algo
+});
+
+$('#miForm').submit(function(e) {
+    e.preventDefault(); // evitar recarga
+    // hacer algo
+});
+
+*****************************ejemplo
+$(document).ready(function() {
+    
+    $('#BOTON_O_FORM').EVENTO(function(e) {
+        e.preventDefault();  // Si es submit
+        
+        let datos = {
+            campo1: $('#campo1').val(),
+            campo2: $('#campo2').val()
+        };
+        
+        $.ajax({
+            data: datos,
+            url: 'TU_ARCHIVO.php',
+            type: 'POST',
+            
+            beforeSend: function() {
+                $('#resultado').html('Procesando...');
+            },
+            
+            success: function(respuesta) {
+                $('#resultado').html(respuesta);
+            },
+            
+            error: function() {
+                alert('Error de conexión');
+            }
+        });
+        
+    });
+    
+});

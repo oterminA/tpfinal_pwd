@@ -1,5 +1,7 @@
 <?php
 //acá voy a guardar las funciones auxiliares
+//la uso cada vez que necesite incluir dinamicamente el get y post (?)
+//creo que al tener este archivo llamado en configuracion.php siempre va a estar includo porque ESE archivo tiene que estar en cada script php
 
 define('ROOT', dirname(__DIR__) . '/'); 
 

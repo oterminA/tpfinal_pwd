@@ -10,7 +10,8 @@
 </head>
 
 <body>
-    <?php include_once '../Vista/estructura/header.php'; ?>
+<?php include_once '../../estructura/header.php'; ?>
+
 
     <main>
         <h2> Dale un gusto a tu mascota y regalale lo mejor</h2>
@@ -42,7 +43,7 @@
         </div> -->
     </main>
 
-    <?php include_once '../Vista/estructura/footer.php'; ?>
+    <?php include_once '../../estructura/footer.php'; ?>
 </body>
 
 </html>

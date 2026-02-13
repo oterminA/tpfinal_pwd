@@ -11,7 +11,7 @@
 </head>
 
 <body>
-    <?php include_once '../Vista/estructura/header.php'; ?>
+<?php include_once '../../estructura/header.php'; ?>
 
     <div id="wrapper">
         <h3>Envianos un mensaje</h3>
@@ -33,7 +33,8 @@
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.3/dist/jquery.validate.min.js"></script>
-    <?php include_once '../Vista/estructura/footer.php'; ?>
+    <?php include_once '../../estructura/footer.php'; ?>
+
 
 </body>
 
