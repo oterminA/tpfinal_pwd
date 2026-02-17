@@ -24,7 +24,7 @@ $ctrlCompraItem = new CompraItemController();
 //     echo "ERROR.\n";
 // }
 
-// $paramUsuario = ['usnombre'=> 'caro', 'uspass'=> "0123", 'usmail'=> 'caro@admin.com', 'usdeshabilitado'=> null];
+// $paramUsuario = ['usnombre'=> 'pipo', 'uspass'=> "0123", 'usmail'=> 'pipo@admin.com', 'usdeshabilitado'=> null];
 // $altaUsuario = $ctrlUsuario->alta($paramUsuario);
 // if ($altaUsuario){
 //     echo "ALTA REALIZADA.\n";
@@ -93,3 +93,44 @@ $ctrlCompraItem = new CompraItemController();
 // }else{
 //     "ERROR.\n";
 // }
+
+
+////prueba para ver si funciona lo de rol menu
+////ver el listado de roles
+// $listaRoles = $ctrlRol->buscar(null);
+// if (is_array($listaRoles) && count($listaRoles) > 0) {
+//     foreach ($listaRoles as $rol) {
+//         echo $rol . "\n";
+//     }
+// }else{
+//     echo "error\n";
+// }
+
+//ver el listado de menues
+// $listaMenúes = $ctrlMenu->buscar(null);
+// if (is_array($listaMenúes) && count($listaMenúes) > 0) {
+//     foreach ($listaMenúes as $menu) {
+//         echo $menu . "\n";
+//     }
+// }else{
+//     echo "error\n";
+// }
+
+
+//ver el listado de menurol
+$listaMR = $ctrlMenuRol->buscar(null);
+if (is_array($listaMR) && count($listaMR) > 0) {
+    foreach ($listaMR as $menurol) {
+        $objMenu = $menurol->getObjMenu();
+        $objRol = $menurol->getObjRol();
+        $rol = $objRol->getRolDescripcion();
+        $menu = $objMenu->getNombreMenu();
+
+        echo "*******MENÚ DINÁMICO*******\n";
+        echo "> ROL: " . $rol . "\n";
+        echo " tiene \n";
+        echo "> SECCIÓN DEL MENÚ: " . $menu . "\n";
+    }
+}else{
+    echo "error\n";
+}

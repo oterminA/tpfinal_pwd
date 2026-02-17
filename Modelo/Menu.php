@@ -274,7 +274,7 @@ class Menu
             "Menú nombre: " . $this->getNombreMenu() . "\n" .
             "Menú descripcion: " . $this->getMenuDescripcion() . "\n" .
             "Datos menú padre----\n" . $this->getIdMenu() . "\n" .
-            "Menú deshabilitado: " . $this->getMenuDescripcion() . "\n";
+            "Menú deshabilitado: " . $this->getDeshabilitado() . "\n";
         return $mensaje;
     }
 }

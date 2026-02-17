@@ -1,19 +1,43 @@
 <?php
-include_once '../../util/funciones.php';
+include_once('../../configuracion.php');
 
 $datos = data_submitted();
-$controlUs = new UsuarioController();
+$idusuario = $datos['idusuario'] ?? null;
 
-$param = [
-    'idusuario'       => $datos['idusuario'], 
-    'usdeshabilitado' => null
-];
-
-$modificacion = $controlUs->modificacion($param);
-
-if ($modificacion) {
-    header('Location: ../vistaAdmin.php?msg=exito_habilitacion');
-} else {
-    header('Location: ../vistaAdmin.php?msg=error_datos');
+if (!$idusuario) {
+    echo json_encode([
+        'success' => false,
+        'msg' => 'ID de usuario no proporcionado'
+    ]);
+    exit;
 }
-exit;
+
+try {
+    $objControl = new UsuarioController();
+    
+    $param = [
+        'idusuario' => $idusuario,
+        'usdeshabilitado' => null // null = habilitado
+    ];
+    
+    $resultado = $objControl->modificacion($param);
+    
+    if ($resultado) {
+        echo json_encode([
+            'success' => true,
+            'msg' => 'Usuario habilitado correctamente'
+        ]);
+    } else {
+        echo json_encode([
+            'success' => false,
+            'msg' => 'No se pudo habilitar el usuario'
+        ]);
+    }
+    
+} catch (Exception $e) {
+    echo json_encode([
+        'success' => false,
+        'msg' => 'Error del servidor: ' . $e->getMessage()
+    ]);
+}
+?>

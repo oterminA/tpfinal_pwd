@@ -63,7 +63,7 @@ class UsuarioRol{
                 if ($res > 0) {
                     $row = $base->Registro();
                     
-                    $this->setear($row['id'], $row['idrol'], $row['idusuario']);
+                    $this->setear($row['idusuariorol'], $row['idrol'], $row['idusuario']);
                     $resp = true;
                 }
             }
@@ -83,7 +83,7 @@ class UsuarioRol{
         if ($base->Iniciar()) {
             if ($base->Ejecutar($sql)) {
                 if ($row = $base->Registro()) {
-                    $this->cargar($row['id'], $row['idrol'], $row['idusuario']);
+                    $this->cargar($row['idusuariorol'], $row['idrol'], $row['idusuario']);
                     $resp = true;
                 }
             } else {
@@ -200,7 +200,7 @@ class UsuarioRol{
                     $objRol->setIdRol($row['idrol']);
                     $objRol->cargar(); 
                 
-                    $obj->setear($row['id'], $objRol, $objUsuario);
+                    $obj->setear($row['idusuariorol'], $objRol, $objUsuario);
                     array_push($arreglo, $obj);
                 }
                 

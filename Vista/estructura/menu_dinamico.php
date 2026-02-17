@@ -1,5 +1,4 @@
 <?php
-// Vista/estructura/menu_dinamico.php
 include_once '../configuracion.php';
 
 $session = new Session();
@@ -11,33 +10,27 @@ if ($session->activa()) {
     $ctrlMenuRol = new MenuRolController();
     $ctrlMenu = new MenuController();
     
-    // Obtener roles del usuario
     $rolesUsuario = $ctrlUsuarioRol->buscar(['idusuario' => $usuario->getIdUsuario()]);
     
     $menusPermitidos = [];
     
-    // Por cada rol, obtener sus menús
     foreach ($rolesUsuario as $usuarioRol) {
         $idRol = $usuarioRol->getObjRol()->getIdRol();
         
-        // Buscar menús asociados a este rol
         $menuRoles = $ctrlMenuRol->buscar(['idrol' => $idRol]);
         
         foreach ($menuRoles as $menuRol) {
             $menu = $menuRol->getObjMenu();
             $idMenu = $menu->getIdMenu();
             
-            // Evitar duplicados
             if (!isset($menusPermitidos[$idMenu])) {
                 $menusPermitidos[$idMenu] = $menu;
             }
         }
     }
     
-    // Construir el HTML del menú
     $menuHtml .= '<div class="easyui-accordion" style="width:100%;">';
     
-    // Agrupar menús por padre (menús principales)
     $menusPrincipales = [];
     $submenus = [];
     
@@ -53,7 +46,7 @@ if ($session->activa()) {
         }
     }
     
-    // Generar acordeón
+    //acordeón
     foreach ($menusPrincipales as $menuPrincipal) {
         $idMenu = $menuPrincipal->getIdMenu();
         $titulo = $menuPrincipal->getMeNombre();
@@ -71,7 +64,6 @@ if ($session->activa()) {
             }
             $menuHtml .= '</ul>';
         } else {
-            // Si no tiene submenús, es un enlace directo
             $menuHtml .= '<a href="' . $menuPrincipal->getMeDescripcion() . '" class="menu-link">';
             $menuHtml .= 'Ir a ' . $titulo;
             $menuHtml .= '</a>';
@@ -82,7 +74,6 @@ if ($session->activa()) {
     
     $menuHtml .= '</div>';
 } else {
-    // Usuario no logueado - menú público
     $menuHtml = '
     <div class="easyui-accordion" style="width:100%;">
         <div title="Menú" style="padding:10px;">

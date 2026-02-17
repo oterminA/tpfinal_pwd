@@ -1,58 +1,92 @@
 <?php
-include_once '../../util/funciones.php';
+include_once('../../configuracion.php');
 
 $datos = data_submitted();
 
-$controlUs = new UsuarioController();
-$controlR  = new RolController();
-$controlUR = new UsuarioRolController();
+$usnombre = trim($datos['usnombre'] ?? '');
+$uspass = $datos['uspass'] ?? '';
+$usmail = $datos['usmail'] ?? '';
 
-$usuario = trim($datos['usnombre'] ?? '');
-$pass    = $datos['uspass'] ?? '';
-$mail    = $datos['usmail'] ?? '';
-
-if ($usuario === '') {
-    header('Location: ../../../registrarse.php?error=datos');
+if (empty($usnombre) || empty($uspass) || empty($usmail)) {
+    echo json_encode([
+        'success' => false,
+        'msg' => 'Todos los campos son obligatorios'
+    ]);
     exit;
-} else {
-    $existeUsuario = $controlUs->buscar(['usnombre' => $usuario]);
+}
 
+try {
+    $objControlUs = new UsuarioController();
+    $objControlR = new RolController();
+    $objControlUR = new UsuarioRolController();
+    
+    $existeUsuario = $objControlUs->buscar(['usnombre' => $usnombre]);
+    
     if (count($existeUsuario) > 0) {
-        header('Location: ../../../registrarse.php?error=existe');
+        echo json_encode([
+            'success' => false,
+            'msg' => 'El nombre de usuario ya existe'
+        ]);
         exit;
     }
-
+    
+    $existeMail = $objControlUs->buscar(['usmail' => $usmail]);
+    
+    if (count($existeMail) > 0) {
+        echo json_encode([
+            'success' => false,
+            'msg' => 'El email ya está registrado'
+        ]);
+        exit;
+    }
+    
     $paramUser = [
-        'usnombre'        => $usuario,
-        'uspass'          => $pass,
-        'usmail'          => $mail,
+        'usnombre' => $usnombre,
+        'uspass' => $passHash,
+        'usmail' => $usmail,
         'usdeshabilitado' => null
     ];
-
-    $idUsuario = $controlUs->alta($paramUser);
-
-    if (!$idUsuario) {
-        header('Location: ../registrarse.php?error=alta');
-        exit;
-    } else {
-
-        $roles = $controlR->buscar(['roldescripcion' => 'cliente']);
-
-        if (count($roles) === 0) {
-            header('Location: ../registrarse.php?error=rol');
-            exit;
-        } else {
+    
+    $resultado = $objControlUs->alta($paramUser);
+    
+    if ($resultado) {
+        $usuariosCreados = $objControlUs->buscar(['usnombre' => $usnombre]);
+        $nuevoUsuario = $usuariosCreados[0];
+        $idUsuario = $nuevoUsuario->getIdUsuario();
+        
+        $roles = $objControlR->buscar(['roldescripcion' => 'cliente']);
+        
+        if (count($roles) > 0) {
             $idRol = $roles[0]->getIdRol();
-
+            
             $paramUR = [
                 'idusuario' => $idUsuario,
-                'idrol'     => $idRol
+                'idrol' => $idRol
             ];
-
-            $controlUR->alta($paramUR);
-
-            header('Location: ../login.php?msg=exito_registro');
-            exit;
+            
+            $objControlUR->alta($paramUR);
+            
+            echo json_encode([
+                'success' => true,
+                'msg' => 'Usuario registrado exitosamente'
+            ]);
+        } else {
+            echo json_encode([
+                'success' => false,
+                'msg' => 'Error: Rol "cliente" no encontrado'
+            ]);
         }
+    } else {
+        echo json_encode([
+            'success' => false,
+            'msg' => 'Error al crear el usuario'
+        ]);
     }
+    
+} catch (Exception $e) {
+    echo json_encode([
+        'success' => false,
+        'msg' => 'Error del servidor: ' . $e->getMessage()
+    ]);
 }
+?>

@@ -1,6 +1,10 @@
 <?php
-include_once '../../util/funciones.php';
+session_start();
 
-$sesion = new Session();
+$_SESSION = array();
+
 $cerrar = $sesion->cerrar();
-header('Location: ../login.php');
+
+header('Location: ../login/login.php');
+exit;
+?>
