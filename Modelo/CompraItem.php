@@ -1,6 +1,7 @@
 <?php
 //el modelo consulta directamente con la base de datos y le puede llegar a pasar info al control
 //hay delegación
+//esta clase vincula al producto y la compra, o sea qué usuario 'compra' qué producto
 class compraitem
 {
     private $idcompraitem;

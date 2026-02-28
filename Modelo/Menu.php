@@ -86,30 +86,30 @@ class Menu
     {
         $resp = false;
         $base = new BaseDatos();
-        $sql = "SELECT * FROM menu WHERE idmenu = '" . $this->getidmenu() . "'";
-
+        $sql = "SELECT * FROM menu WHERE idmenu = '" . $this->getIdMenu() . "'";
+    
         if ($base->Iniciar()) {
             $res = $base->Ejecutar($sql);
-            if ($res > -1) {
-                if ($res > 0) {
-                    $row = $base->Registro();
-
+            if ($res > 0) {
+                $row = $base->Registro();
+    
+                $objmenupadre = null;
+                // IMPORTANTE: Usar 'idpadre', no 'idmenu'
+                if (isset($row['idpadre']) && $row['idpadre'] != null && $row['idpadre'] != 0) {
                     $objmenupadre = new Menu();
-                    $objmenupadre->setIdMenu($row['idmenu']);
+                    $objmenupadre->setIdMenu($row['idpadre']);
                     $objmenupadre->cargar();
-
-                    $this->setear(
-                        $row['idmenu'],
-                        $row['menombre'],
-                        $row['medescripcion'],
-                        $objmenupadre,
-                        $row['medeshabilitado'],
-                    );
-                    $resp = true;
                 }
+    
+                $this->setear(
+                    $row['idmenu'],
+                    $row['menombre'],
+                    $row['medescripcion'],
+                    $objmenupadre,
+                    $row['medeshabilitado']
+                );
+                $resp = true;
             }
-        } else {
-            $this->setmensajeoperacion("menu->cargar: " . $base->getError());
         }
         return $resp;
     }
@@ -205,30 +205,30 @@ class Menu
             $sql .= 'WHERE ' . $parametro;
         }
         $res = $base->Ejecutar($sql);
-        if ($res > -1) {
-            if ($res > 0) {
-
-                while ($row = $base->Registro()) {
-                    $obj = new Menu();
-
+        if ($res > 0) {
+            while ($row = $base->Registro()) {
+                $obj = new Menu();
+                
+                $objmenupadre = null;
+                // Corregido: Referenciar al padre real
+                if (isset($row['idpadre']) && $row['idpadre'] != null && $row['idpadre'] != 0) {
                     $objmenupadre = new Menu();
-                    $objmenupadre->setIdMenu($row['idmenu']);
-                    $objmenupadre->cargar();
-
-                    $obj->setear(
-                        $row['idmenu'],
-                        $row['menombre'],
-                        $row['medescripcion'],
-                        $objmenupadre,
-                        $row['medeshabilitado'],
-                    );
-                    array_push($arreglo, $obj);
+                    $objmenupadre->setIdMenu($row['idpadre']);
+                    // Opcional: cargar() aquí podría ser pesado si hay muchos niveles, 
+                    // pero es necesario para la recursividad que buscas.
+                    $objmenupadre->cargar(); 
                 }
+    
+                $obj->setear(
+                    $row['idmenu'],
+                    $row['menombre'],
+                    $row['medescripcion'],
+                    $objmenupadre,
+                    $row['medeshabilitado']
+                );
+                array_push($arreglo, $obj);
             }
-        } else {
-            self::setmensajeoperacion("menu->listar: " . $base->getError());
         }
-
         return $arreglo;
     }
 
@@ -236,34 +236,37 @@ class Menu
      * recibe un id como parametro y ejecuta la consulta del SELECT buscando lo que coincida con la informacion
      */
     public function buscar($idMenu)
-    {
-        $base = new BaseDatos();
-        $consulta = "SELECT * FROM menu WHERE idmenu = " . $idMenu;
-        $resp = false;
-        if ($base->Iniciar()) {
-            if ($base->Ejecutar($consulta)) {
-                if ($row = $base->Registro()) {
+{
+    $base = new BaseDatos();
+    $consulta = "SELECT * FROM menu WHERE idmenu = " . $idMenu;
+    $resp = false;
+    if ($base->Iniciar()) {
+        if ($base->Ejecutar($consulta)) {
+            if ($row = $base->Registro()) {
+                $objmenupadre = null;
+                if (isset($row['idpadre']) && $row['idpadre'] != null && $row['idpadre'] != 0) {
                     $objmenupadre = new Menu();
-                    $objmenupadre->setIdMenu($row['idmenu']);
-                    $objmenupadre->cargar();
-
-                    $this->cargar(
-                        $row['idmenu'],
-                        $row['menombre'],
-                        $row['medescripcion'],
-                        $objmenupadre,
-                        $row['medeshabilitado'],
-                    );
-                    $resp = true;
+                    $objmenupadre->setIdMenu($row['idpadre']);
+                    $objmenupadre->cargar(); 
                 }
-            } else {
-                self::setmensajeoperacion($base->getError());
+                $this->setear( 
+                    $row['idmenu'],
+                    $row['menombre'],
+                    $row['medescripcion'],
+                    $objmenupadre,
+                    $row['medeshabilitado']
+                );
+                
+                $resp = true;
             }
         } else {
             self::setmensajeoperacion($base->getError());
         }
-        return $resp;
+    } else {
+        self::setmensajeoperacion($base->getError());
     }
+    return $resp;
+}
 
 
     ///////////to_String()

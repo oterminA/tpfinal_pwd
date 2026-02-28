@@ -1,4 +1,6 @@
 <!DOCTYPE html>
+<!-- por ahora no lo uso -->
+
 <html lang="en">
 
 <head>
@@ -16,27 +18,31 @@
 
 <body>
     <header>
-        <nav class="navbar navbar-expand-lg bg-body-tertiary">
-            <div class="container-fluid">
-                <a class="navbar-brand" href="../estructura/index.php">MascotaFeliz</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <!-- <div class="collapse navbar-collapse" id="navbarNav">
-                    <ul class="navbar-nav">
-                        <li class="nav-item">
-                            <a class="nav-link active" href="../productos.php" target="_blank">Productos</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link active" href="../contacto.php" target="_blank">Contacto</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link active" href="../login.php" target="_blank">Ingresar</a>
-                        </li>
-                    </ul>
-                </div> -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-info">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="index.php">MascotaFeliz</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="../paginas/index.php">Inicio</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link " href="../paginas/productos.php">Productos</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="../paginas/contacto.php">Contacto</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="../paginas/login.php">Ingresar</a>
+                    </li>
+                </ul>
             </div>
-        </nav>
+        </div>
+    </nav>
+
     </header>
 </body>
 

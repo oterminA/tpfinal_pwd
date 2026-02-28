@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<!-- por ahora no lo uso -->
 <html lang="en">
 
 <head>
@@ -10,16 +11,8 @@
 </head>
 
 <body>
-    <footer>
-        <div class="card text-center">
-            <div class="card-header">
-                Trabajo práctico final de PWD.
-            </div>
-            <div class="card-body">
-                <h5 class="card-title">Elaborado por Carolina Otermin</h5>
-                <a href="https://github.com/oterminA" class="btn btn-primary">Link al perfil de Github</a>
-            </div>
-        </div>
+    <footer class="bg-dark text-white text-center py-3 mt-5">
+        <p>&copy; 2026 MascotaFeliz - TPFINAL PWD</p>
     </footer>
 </body>
 

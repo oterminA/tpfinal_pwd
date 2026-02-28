@@ -4,40 +4,44 @@
 //desde el action por ejemplo yo voy a hacer una instancia de esta clase y acá es q voy a usar a la superglobal $_SESSION que devuelve un array asociativo
 class Session
 {
+
+    /** 
+    * con este constructor lo que hago es que cuando creo una nueva instancia de sesión inmediatamte se hace un session_start
+    */
     public function __construct()
     {
         if (session_status() !== PHP_SESSION_ACTIVE) {
-            session_start();
+            session_start(); //inicializa una sesión
         }
     }
 
     /**
-     * Inicia sesión validando usuario y contraseña
+     * Inicia sesión VALIDANDO usuario y contraseña, o sea que exista el user y queno esté deshabilitado
      */
     public function iniciar($usuario, $contra)
     {
-        $resp = false;
+        $resp = false; //bandera en false x defecto
 
-        $ctrlUsuario = new UsuarioController();
-        $lista = $ctrlUsuario->buscar([
+        $ctrlUsuario = new UsuarioController(); //new de usuario
+        $lista = $ctrlUsuario->buscar([ //busco al usuaario
             'usnombre' => $usuario,
             'uspass'   => $contra
         ]);
 
-        //         var_dump($lista);
+        // var_dump($lista);
         // exit;
 
-        if (!empty($lista)) {
-            $objUsuario = $lista[0];
-            $deshabilitado = $objUsuario->getDeshabilitado();
+        if (!empty($lista)) { //si no está vacía esa variable = hay usuario
+            $objUsuario = $lista[0]; //busco al primer usuario con esos datos o sea es el que estoy buscando
+            $deshabilitado = $objUsuario->getDeshabilitado(); //recupero el estado de deshabilitación
             if ($deshabilitado === null || $deshabilitado === '0000-00-00 00:00:00') { //con esto solucioné el tema de que me daba error esta funcion y en el var_dump mostraba que deshabilitado era un string, por eso el problema con null
-                $_SESSION['idusuario'] = $objUsuario->getIdUsuario();
+                //si el usuario NO está deshabilitado
+                $_SESSION['idusuario'] = $objUsuario->getIdUsuario(); //guardo en session la info del id del user
                 $_SESSION['usnombre']  = $objUsuario->getNombre();
-                $resp = true;
+                $resp = true; 
             }
         }
-
-        return $resp;
+        return $resp; //retorno true si se valida la autenticacion de credenciales o false si no
     }
 
     /**
@@ -45,7 +49,7 @@ class Session
      */
     public function validar()
     {
-        return isset($_SESSION['idusuario']);
+        return isset($_SESSION['idusuario']); //retorno el id del user sessionado
     }
 
     /**
@@ -69,6 +73,19 @@ class Session
     }
 
     /**
+     * deevuelve el id del user logueado
+     */
+    public function getIdUsuario()
+    {
+        $id = null;
+        if (isset($_SESSION['idusuario'])) {// si el id no es null
+            $id = $_SESSION['idusuario'];
+        }
+        return $id; //retorno null o el id del user
+    }
+
+
+    /**
      * Devuelve el rol del usuario logueado
      */
     public function getRol()
@@ -81,13 +98,13 @@ class Session
                 'idusuario' => $_SESSION['idusuario']
             ]);
 
-            if (!empty($listaRoles)) { //si no está vacio el array
+            if (!empty($listaRoles)) { //si no está vacio el array de usuarios
                 $objUsuarioRol = $listaRoles[0]; //recupero un obj usuariorol
                 $objRol = $objUsuarioRol->getObjRol(); //recupero un obj rol
                 $rolNombre = $objRol->getRolDescripcion(); //recupero el tipo de rol que tiene ese obj rol
             }
         }
-        return $rolNombre; //retorno null o el rol de ese obj rol
+        return $rolNombre; //retorno null o el rol de ese obj rol(ejemplo 'admin)
     }
 
     /**
@@ -96,33 +113,12 @@ class Session
     public function cerrar()
     {
         if ($this->activa()) {
-            session_unset();
-            session_destroy();
+            session_unset(); //libera las variables de sesión, lo pongo porque entiendo que es buena practica
+            session_destroy(); //destruye la sesion
         }
     }
 }
 
-
-
-/**
- * 
- */
-    /* public function login($nombreUsuario, $pass) {
-        $resp = false;
-        $controlUsuario = new AbmUsuario();
-        
-        $datosUsuario = $controlUsuario->verificarCredenciales($nombreUsuario, $pass); 
-        
-        if ($datosUsuario != null) {
-            $this->iniciar($nombreUsuario, $pass); 
-            
-            if (isset($datosUsuario['iduser'])) {
-                $_SESSION['idusuario_real'] = $datosUsuario['iduser']; 
-            }
-            $resp = true;
-        }
-        return $resp;
-    }*/
 
 //****
 /*Funciones principales

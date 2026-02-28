@@ -1,5 +1,6 @@
 <?php
 //el modelo consulta directamente con la base de datos y le puede llegar a pasar info al control
+//esta es una tabla ESTATICA porque solo indica los estados que puede tener una compra en general, no habla de una compra especifica
 class CompraEstadoTipo
 {
     private $idcompraestadotipo;

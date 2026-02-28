@@ -12,13 +12,13 @@ class ProductoController
     {
         $obj = null;
 
-        if (isset($param['pronombre']) && isset($param['prodetalle']) && isset($param['procantstock'])) {
+        if (isset($param['pronombre']) && isset($param['prodetalle']) && isset($param['procantstock']) && isset($param['proimagen'])) {
             $id = $param['idproducto'] ?? null; // si no existe ese id null porque en realidad acá no viene xq es autoincremental
             $precio = $param['proprecio'] ?? null;
             $deshabilitado = $param['prodeshabilitado'] ?? null; 
 
             $obj = new Producto();
-            $obj->setear($id, $param['pronombre'], $param['prodetalle'], $param['procantstock'], $precio, $deshabilitado);
+            $obj->setear($id, $param['pronombre'], $param['prodetalle'], $param['procantstock'], $precio, $deshabilitado,$param['proimagen']);
         }
         return $obj;
     }
@@ -34,7 +34,7 @@ class ProductoController
 
         if (isset($param['idproducto'])) {
             $obj = new Producto();
-            $obj->setear($param['idproducto'], null, null, null, null, null);
+            $obj->setear($param['idproducto'], null, null, null, null, null, null);
         }
         return $obj;
     }
@@ -119,6 +119,8 @@ class ProductoController
                 $where .= " AND proprecio ='" . $param['proprecio'] . "'";
             if (isset($param['prodeshabilitado']))
                 $where .= " AND prodeshabilitado ='" . $param['prodeshabilitado'] . "'";
+                if (isset($param['proimagen']))
+                $where .= " AND proimagen ='" . $param['proimagen'] . "'";
         }
         $arreglo = Producto::listar($where);
         return $arreglo;

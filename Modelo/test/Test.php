@@ -32,7 +32,7 @@ $ctrlCompraItem = new CompraItemController();
 //     echo "ERROR.\n";
 // }
 
-// $paramUsuarioRol = ['idrol'=> 3, 'idusuario'=> 3];
+// $paramUsuarioRol = ['idrol'=> 3, 'idusuario'=> 6];
 // $altaUsuarioRol = $ctrlUsuarioRol->alta($paramUsuarioRol);
 // if ($altaUsuarioRol){
 //     echo "ALTA REALIZADA.\n";
@@ -47,16 +47,14 @@ $ctrlCompraItem = new CompraItemController();
 // 1Productos
 // 2Inicio
 // 3Contacto
-// 4Ingresar
-// 5Registrar
 // 6Mi cuenta
 // 7Carrito
-// 8Salir
 // 9Usuarios
 // 10Roles
 //11 menu
+// 27 pedidos
 
-// $paramMenuRol = ['idmenu'=> 8, 'idrol'=> 3];
+// $paramMenuRol = ['idmenu'=> 10, 'idrol'=> 3];
 // $altaMenuRol = $ctrlMenuRol->alta($paramMenuRol);
 // if ($altaMenuRol){
 //     echo "ALTA REALIZADA.\n";
@@ -65,7 +63,7 @@ $ctrlCompraItem = new CompraItemController();
 // }
 
 
-// $paramMenu = ['menombre' => 'Menu', 'medescripcion' => 'para hacer modificaciones a las opciones de menu', 'idpadre' => null, 'medeshabilitado' => null];
+// $paramMenu = ['menombre' => 'Pedidos', 'medescripcion' => 'muestra información de las compras y pedidos', 'idpadre' => null, 'medeshabilitado' => null];
 // // var_dump($paramMenu);
 // $altaMenu = $ctrlMenu->alta($paramMenu);
 // if ($altaMenu) {
@@ -74,7 +72,7 @@ $ctrlCompraItem = new CompraItemController();
 //     echo "ERROR EN EL ALTA.\n";
 // }
 
-// $paramProducto = ['pronombre'=> 'Arenero', 'prodetalle'=> 'arenero grande para gatos', 'procantstock'=> 15, 'proprecio'=> 50000, 'prodeshabilitado'=> null];
+// $paramProducto = ['pronombre'=> 'Plato para comida/agua', 'prodetalle'=> 'Plato para comida/agua perro o gato, indistinto', 'procantstock'=> 2, 'proprecio'=> 12000, 'prodeshabilitado'=> null, 'proimagen' => 'Vista/css/Assets/plato_mascota.jpg'];
 // $altaProducto = $ctrlProducto->alta($paramProducto);
 // // var_dump($paramProducto);
 // if ($altaProducto){
@@ -118,19 +116,19 @@ $ctrlCompraItem = new CompraItemController();
 
 
 //ver el listado de menurol
-$listaMR = $ctrlMenuRol->buscar(null);
-if (is_array($listaMR) && count($listaMR) > 0) {
-    foreach ($listaMR as $menurol) {
-        $objMenu = $menurol->getObjMenu();
-        $objRol = $menurol->getObjRol();
-        $rol = $objRol->getRolDescripcion();
-        $menu = $objMenu->getNombreMenu();
+// $listaMR = $ctrlMenuRol->buscar(null);
+// if (is_array($listaMR) && count($listaMR) > 0) {
+//     foreach ($listaMR as $menurol) {
+//         $objMenu = $menurol->getObjMenu();
+//         $objRol = $menurol->getObjRol();
+//         $rol = $objRol->getRolDescripcion();
+//         $menu = $objMenu->getNombreMenu();
 
-        echo "*******MENÚ DINÁMICO*******\n";
-        echo "> ROL: " . $rol . "\n";
-        echo " tiene \n";
-        echo "> SECCIÓN DEL MENÚ: " . $menu . "\n";
-    }
-}else{
-    echo "error\n";
-}
+//         echo "*******MENÚ DINÁMICO*******\n";
+//         echo "> ROL: " . $rol . "\n";
+//         echo " tiene \n";
+//         echo "> SECCIÓN DEL MENÚ: " . $menu . "\n";
+//     }
+// }else{
+//     echo "error\n";
+// }

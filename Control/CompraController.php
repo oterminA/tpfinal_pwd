@@ -99,6 +99,43 @@ class CompraController
         return $resp;
     }
 
+
+    /**
+     * con esta función verifico si hay una compra en curso para un usuario específico retornando su id, así no se duplican
+    */
+    public function existeCompraEnCurso($idUsuario) {
+        $idCompraResultado = null;
+        $listaCompras = $this->buscar(['idusuario' => $idUsuario]);
+        
+        $i = 0;
+        $cantidadCompras = count($listaCompras);
+    
+        while ($i < $cantidadCompras && $idCompraResultado == null) {
+            $objCompra = $listaCompras[$i];
+            $idCompra = $objCompra->getIdCompra();
+            
+            $objCEControl = new CompraEstadoController();
+            $estadosActivos = $objCEControl->Buscar(['idcompra' => $idCompra, 'cefechafin' => 'null']);
+    
+            if (count($estadosActivos) == 0) {
+                $historialCompleto = $objCEControl->Buscar(['idcompra' => $idCompra]);
+                if (count($historialCompleto) == 0) {
+                    $idCompraResultado = $idCompra;
+                }
+            } else {
+                $objEstadoActual = $estadosActivos[0];
+                $idTipoEstado = $objEstadoActual->getObjCet()->getIdCompraEstadoTipo();
+                
+                if ($idTipoEstado == 1) {
+                    $idCompraResultado = $idCompra;
+                }
+            }
+            $i++; 
+        }
+        
+        return $idCompraResultado; //que es null o el id de la compra que está activa
+    }
+
  
     /**
      * permite Buscar un objeto usando info que entra por parametro y acá tengo que usarlo así porque no puedo acceder directamente a la info sino que tengo q pasar por el modelo

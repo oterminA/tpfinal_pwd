@@ -1,85 +1,87 @@
+<?php
+//ESTE SCRIPT ES EL INICIO DE LA VISTA PUBLICA//
+include_once "../../configuracion.php";
+$ctrlProductos = new ProductoController(); //hago un new de productos
+$listaProductos = $ctrlProductos->buscar(null); //traigo todos los productos que esten guardados como tal
+?>
 <!DOCTYPE html>
-<!-- segun entiendo esto es lo que va a ver CUALQUIER persona indistintamente si tiene cuenta o no, es una paginapublica -->
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MascotaFeliz</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="css/styleEstructura.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
+
 <body>
-    
-    <nav class="navbar navbar-expand-lg navbar-dark bg-info">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="index.php">MascotaFeliz</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link active" href="index.php">Inicio</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="./productos.php">Productos</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="./contacto.php">Contacto</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="./login.php">Ingresar</a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </nav>
-    
-    <main class="container my-5">
-        <div class="text-center">
-            <h1>Dale un gusto a tu mascota y regalale lo mejor</h1>
-            <h3>Accesorios, ropa, juguetes... todo lo que buscas en un mismo lugar</h3>
-        </div>
-        
-        <div class="row mt-5">
-        <div class="text-center">
-            <h4>Productos destacados</h4>
-        </div>
-            <div class="col-md-4">
-                <div class="card">
-                    <img src="../css/Assets/corgi_juguete.jpg" class="card-img-top" alt="Juguete para perro">
-                    <div class="card-body">
-                        <h5 class="card-title">Juguete para perros</h5>
-                        <p class="card-text">$2500</p>
-                    </div>
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-dark bg-info shadow">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="index.php">MascotaFeliz</a>
+                <div class="collapse navbar-collapse">
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item">
+                            <button class="nav-link" href="javascript:void(0)" onclick="mostrarSeccionPublica('productos')">Productos</button>
+                            <!-- acá estoy usando una funcioón que tiene un switch donde muestra el contenido segun lo que entre por parametro -->
+                            <!-- cambié el <a> por el button porque leí que actualmente se prefiere el button antes de que a -->
+                        </li>
+                        <li class="nav-item">
+                            <button class="nav-link" href="javascript:void(0)" onclick="mostrarSeccionPublica('contacto')">Contacto</button>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-secondary fw-bold" href="login.php">Ingresar</a>
+                        </li>
+                    </ul>
                 </div>
             </div>
-            <div class="col-md-4">
-                <div class="card">
-                    <img src="../css/Assets/alimento_perro.jpg" class="card-img-top" alt="Alimento para perro">
-                    <div class="card-body">
-                        <h5 class="card-title">Alimento para perros adultos por kilo</h5>
-                        <p class="card-text">$3000</p>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="card">
-                    <img src="../css/Assets/plato_mascota.jpg" class="card-img-top" alt="Plato de comida">
-                    <div class="card-body">
-                        <h5 class="card-title">Plato de comida/agua para mascota</h5>
-                        <p class="card-text">$15000</p>
-                    </div>
-                </div>
-            </div>
+        </nav>
+    </header>
+
+    <main id="contenido-publico" class="container mt-4">
+        <div class="text-center mb-5">
+            <h1 class="display-4 fw-bold text-info">MascotaFeliz</h1>
+            <h2 class=" text-info">Tenemos lo mejor para tu mascota</h2>
+            <h4 class=" text-info">Novedades de la semana</h4>
+        </div>
+
+        <div class="row g-4">
+            <?php if (count($listaProductos) > 0) : ?>
+                <?php foreach ($listaProductos as $objProducto) :
+                    $cantidad = $objProducto->getStockProducto();
+                    if ($cantidad > 11) :
+                        //acá lo que hice es que para que se muestren algunos productos y no elegirlos a mano, puse la condicion de que los productos con stock mayor a 11 son los que se muestran en el inicio, como para variar lo que se muestre
+                        $rutaImagen = $objProducto->getProImagen();
+                ?>
+                        <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+                            <div class="card h-100 shadow-sm border-0">
+                                <div style="height: 180px; overflow: hidden; background-color: #f8f9fa;">
+                                    <img src="<?php echo $rutaImagen; ?>" class="card-img-top w-100 h-100" style="object-fit: contain; padding: 10px;" alt="...">
+                                </div>
+                                <div class="card-body d-flex flex-column">
+                                    <h5 class="card-title h6 fw-bold"><?php echo $objProducto->getNombreProducto(); ?></h5>
+                                    <p class="card-text text-muted small flex-grow-1"><?php echo $objProducto->getDetalleProducto(); ?></p>
+                                    <span class="fs-5 fw-bold text-primary mb-3">$<?php echo number_format($objProducto->getPrecioProducto(), 0, ',', '.'); ?></span>
+                                    <a href="./login.php" class="btn btn-info text-white w-100">
+                                        <i class="bi bi-cart-plus"></i> Añadir al carrito
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                <?php endif;
+                endforeach; ?>
+            <?php else : ?>
+                <!-- si $listaProductos no tiene productos-->
+                <div class="alert alert-info w-100 text-center">No hay productos disponibles.</div>
+            <?php endif; ?>
         </div>
     </main>
-    
-    <footer class="bg-dark text-white text-center py-3 mt-5">
-    <p>&copy; 2026 MascotaFeliz - TPFINAL PWD</p>
 
+    <footer class="bg-dark text-white text-center py-3 mt-5">
+        <p>&copy; 2026 MascotaFeliz - TPFINAL PWD</p>
     </footer>
-    
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="../js/jquery_ajax.js"></script>
 </body>
+
 </html>

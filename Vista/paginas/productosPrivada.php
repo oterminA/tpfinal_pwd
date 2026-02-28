@@ -1,9 +1,11 @@
 <?php
-//ESTE SCRIPT ES PARA LA VISTA PUBLICA//
-include_once '../../configuracion.php';
+//ESTE SCRIPT ES PARA LA VISTA PRIVADA//
+//solo CLIENTE tiene porductos porque en los otros dos roles esto se muestra en el inicio
+include_once "../../configuracion.php";
+$sesion = new Session(); //hago un new de sesion
+$nombreRol = $sesion->getRol(); //obtengo el rol que se almacenó en la sesión (o sea cuando se hizo login)
 $ctrlProductos = new ProductoController(); //hago un new de la clase productos
-$listaProductos = $ctrlProductos->buscar(null); //traigo todos los productos
-
+$listaProductos = $ctrlProductos->buscar(null); //traigo tooodos los productos almacenados enla bd
 ?>
 
 <div class="container mt-3">
@@ -21,13 +23,14 @@ $listaProductos = $ctrlProductos->buscar(null); //traigo todos los productos
                             <p class="card-text text-muted small"><?php echo $objProducto->getDetalleProducto(); ?></p>
                             <p class="card-text fw-bold fs-5 mt-auto"><?php echo "$" . number_format($objProducto->getPrecioProducto(), 0, ',', '.'); ?></p>
 
-                            <a href="./login.php" class="btn btn-info text-white w-100" >
+                            <button class="btn btn-info text-white w-100" onclick="agregarAlCarrito(<?php echo $objProducto->getIdProducto(); ?>)">
                                 <i class="bi bi-cart-plus"></i> Añadir al carrito
-                            </a>
-                            <!-- acá cuando elcliente quiera agregar al carrito lo mando al login porque sin cuenta no se puede meter cosas al carrtio -->
+                                <!-- acá como es en la privada si puedo poner la funcion js de agregarAlCarrito(id) -->
+                            </button>
                         </div>
                     </div>
                 </div>
             <?php endforeach; ?>
         </div>
+
 </div>

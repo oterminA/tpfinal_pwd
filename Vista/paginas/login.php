@@ -1,17 +1,10 @@
-<?php
-session_start();
-
-if (isset($_SESSION['usuario'])) {
-    header('Location: ../paginas/home.php');
-    exit;
-}
-?>
 <!DOCTYPE html>
+<!-- ESTE SCRIPT ES PARA LA VISTA PUBLICA Y PRIVADA PORQUE LOS QUE NO TIENEN USUARIO PUEDEN INGRESAR A ESTE SCRIPT Y REGISTRARSE, MIENTRAS QUE LOS QUE SI TIENEN USUARIO PUEDEN INGRESAR A ESTE SCRIPT A LOGUEARSE -->
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Inicio sesión</title>
+    <title>Iniciar sesión</title>
     
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
     
@@ -57,11 +50,12 @@ if (isset($_SESSION['usuario'])) {
         
         <p class="text-center mb-0">¿No tenés cuenta?</p>
         <a href="../paginas/registrarse.php" class="btn btn-outline-secondary w-100 mt-2">Registrarse</a>
-        
         <a href="../paginas/index.php" class="btn btn-link w-100 mt-2">Volver a MascotaFeliz</a>
+                <!-- acá no uso ajax porque tengo que salir de la pagina en la que estoy, o sea uso ajax cuando quiero que visualizar otro contenido dentro de la misma pagina sea sin recargar y de manera asincrona, pero acá tengo que dejar de ver el contenido que hayantes  -->
     </div>
 
-    <script src="../js/jquery-4.0.0.js"></script>
-    <script src="../js/jquery_ajax.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="../js/jquery_ajax.js"></script> 
+    <!-- aca en ese jquery está el ajax para la parte de login, para mostrar mensajes por si está mal laautenticacion -->
 </body>
 </html>

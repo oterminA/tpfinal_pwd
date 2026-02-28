@@ -1,6 +1,7 @@
 <?php
 //el modelo consulta directamente con la base de datos y le puede llegar a pasar info al control
 //hay delegación
+// esto sería la compra que quiere hacer un usuario especifico
 class Compra
 {
     private $idcompra;
@@ -96,9 +97,8 @@ class Compra
     {
         $resp = false;
         $base = new BaseDatos();
-        $sql = "INSERT INTO compra(, cofecha, idusuario)
+        $sql = "INSERT INTO compra(cofecha, idusuario)
         VALUES (
-            '',
             '" . $this->getFecha() . "',
             '" . $this->getObjUsuario()->getIdUsuario() . "'
         )";

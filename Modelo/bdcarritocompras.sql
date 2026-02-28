@@ -116,6 +116,7 @@ CREATE TABLE `producto` (
   `procantstock` int(11) NOT NULL,
   `proprecio` bigint(20)  NULL DEFAULT NULL,
   `prodeshabilitado` timestamp DEFAULT NULL
+  `proimagen` varchar(255) NOT NULL,
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------

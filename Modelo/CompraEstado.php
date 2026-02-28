@@ -1,6 +1,7 @@
 <?php
 //el modelo consulta directamente con la base de datos y le puede llegar a pasar info al control
 //hay delegación
+//esta tabla es DINAMICA porque establece la relacion entre una compra y su estado, por eso tiene las referencias a la clase compra y a la compra estado, por ejemplo: compra con id 123 tiene estado "aceptada"
 class CompraEstado
 {
     private $idcompraestado;

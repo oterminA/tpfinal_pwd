@@ -10,30 +10,30 @@ class MenuController
     {
         $obj = null;
         if (isset($param['menombre']) && isset($param['medescripcion'])) { //tengo que poner esto solamente porque acá entran dos posibles null que son idpadre y medeshabilitado entonces rompe el if
-            
+
             $id = $param['idmenu'] ?? null; //porque el id es autoincremental
-            
+
             $objMenuPadre = null; //por si idpadre es null
             if (array_key_exists('idpadre', $param) && $param['idpadre'] != null) {
                 $objMenuPadre = new Menu(); //hago como un new de menu para despues pasar los datos
                 $objMenuPadre->setIdMenu($param['idpadre']);
                 if (!$objMenuPadre->cargar()) {
-                    $objMenuPadre = null; 
+                    $objMenuPadre = null;
                 }
             }
-            
+
             $medeshabilitado = array_key_exists('medeshabilitado', $param) ? $param['medeshabilitado'] : null; //por si deshabilitado es null q puede pasar
-            
+
             $obj = new Menu();
             $obj->setear(
-                $id, 
-                $param['menombre'], 
-                $param['medescripcion'], 
-                $objMenuPadre, 
+                $id,
+                $param['menombre'],
+                $param['medescripcion'],
+                $objMenuPadre,
                 $medeshabilitado
             );
         }
-        
+
         return $obj;
     }
 
@@ -121,21 +121,29 @@ class MenuController
      * usa una función que viene desde el modelo
      */
     public function Buscar($param)
-    {
-        $where = " true ";
-        if ($param <> NULL) {
-            if (isset($param['idmenu']))
-                $where .= " AND idmenu =" . $param['idmenu'];
-            if (isset($param['menombre']))
-                $where .= " AND menombre ='" . $param['menombre'] . "'";
-            if (isset($param['medescripcion']))
-                $where .= " AND medescripcion ='" . $param['medescripcion'] . "'";
-            if (isset($param['idpadre']))
-                $where .= " AND idpadre ='" . $param['idpadre'] . "'";
-            if (isset($param['medeshabilitado']))
-                $where .= " AND medeshabilitado ='" . $param['medeshabilitado'] . "'";
+{
+    $where = " true ";
+    if ($param <> NULL) {
+        if (isset($param['idmenu']))
+            $where .= " AND idmenu =" . $param['idmenu'];
+        if (isset($param['menombre']))
+            $where .= " AND menombre ='" . $param['menombre'] . "'";
+        if (isset($param['medescripcion']))
+            $where .= " AND medescripcion ='" . $param['medescripcion'] . "'";
+            
+        // CAMBIO CRÍTICO AQUÍ:
+        if (array_key_exists('idpadre', $param)) {
+            if ($param['idpadre'] === null) {
+                $where .= " AND idpadre IS NULL";
+            } else {
+                $where .= " AND idpadre =" . $param['idpadre'];
+            }
         }
-        $arreglo = Menu::listar($where);
-        return $arreglo;
+        
+        if (isset($param['medeshabilitado']))
+            $where .= " AND medeshabilitado ='" . $param['medeshabilitado'] . "'";
     }
+    $arreglo = Menu::listar($where);
+    return $arreglo;
+}
 }
