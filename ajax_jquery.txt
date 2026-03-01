@@ -1,5 +1,5 @@
 //se usa solo en codigo js
-//flujo: usuario hace clic → evento JS captura el clic → AJAX envía petición al servidor → PHP procesa (consulta BD, etc.) → PHP devuelve respuesta → JS recibe la respuesta → JS actualiza el DOM (HTML visible)
+//flujo: usuario hace clic → evento JS captura el clic → AJAX envía petición al servidor → PHP procesa (consulta BD, gestiona elementos en el action, etc.) → PHP devuelve respuesta → JS recibe la respuesta → JS actualiza el DOM (HTML visible)
 
 
 *****************************estructura
@@ -51,7 +51,7 @@ $(document).ready(function() {
         
         $.ajax({
             data: datos,
-            url: 'TU_ARCHIVO.php',
+            url: 'ARCHIVO.php',
             type: 'POST',
             
             beforeSend: function() {
