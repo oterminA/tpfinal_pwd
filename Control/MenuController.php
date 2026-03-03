@@ -88,16 +88,33 @@ class MenuController
      */
     public function baja($param)
     {
-        $resp = false;
-        if ($this->seteadosCamposClaves($param)) {
-            $elMenu = $this->cargarObjetoConClave($param);
-            if ($elMenu != null and $elMenu->eliminar()) {
+        // $resp = false;
+        // if ($this->seteadosCamposClaves($param)) {
+        //     $elMenu = $this->cargarObjetoConClave($param);
+        //     if ($elMenu != null and $elMenu->eliminar()) {
+        //         $resp = true;
+        //     }
+        // }
+
+        // return $resp;
+
+            //hago un borrado logico donde deshabilito al menu pero igual guardo el codigo del borrado fisico
+    $resp = false; //bandera
+    if (isset($param['idmenu'])) { //si el idmenu no es null
+        $lista = $this->buscar(['idmenu' => $param['idmenu']]); //guardo un arreglo con lo que devuelve buscar que es un array de objetos con el mismo id
+        
+        if (count($lista) > 0) { //si el array no es vacio
+            $objMenu = $lista[0]; //recupero un obj usuario
+            
+            $objMenu->setDeshabilitado(date("Y-m-d H:i:s")); //seteo la deshabilitacion
+            
+            if ($objMenu->modificar()) { //modifico al obj usuario
                 $resp = true;
             }
         }
-
-        return $resp;
     }
+    return $resp; //devuelvo true o false
+}
 
     /**
      * permite modificar un objeto por la info que llega por paramentro, se ejecuta la funcion de la capa del modelo

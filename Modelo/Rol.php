@@ -3,12 +3,14 @@
 class Rol{
     private $idRol;
     private $rolDescripcion;
+    private $rodeshabilitado;
     private $mensajeBD;
 
     public function __construct()
     {
         $this-> idRol= "";
         $this-> rolDescripcion= "";
+        $this-> rodeshabilitado= "";
         $this->mensajeBD = "";
     }
 
@@ -17,6 +19,9 @@ class Rol{
     }
     public function getRolDescripcion(){
         return $this->rolDescripcion;
+    }
+    public function getDeshabilitado(){
+        return $this->rodeshabilitado;
     }
     public function getmensajeoperacion()
     {
@@ -30,16 +35,20 @@ class Rol{
     public function setRolDescripcion($rolDescripcion){
         $this->rolDescripcion=$rolDescripcion;
     }
+    public function setDeshabilitado($rodeshabilitado){
+        $this->rodeshabilitado=$rodeshabilitado;
+    }
     public function setmensajeoperacion($mensajeBD)
     { //lo que se muestra si hay o no algun error xq es una variable que viene desde la bd
         $this->mensajeBD = $mensajeBD;
     }
 
 
-    public function setear($idRol, $rolDescripcion)
+    public function setear($idRol, $rolDescripcion, $rodeshabilitado)
     {
         $this->setIdRol($idRol);
         $this->setRolDescripcion($rolDescripcion);
+        $this->setDeshabilitado($rodeshabilitado);
     }
 
     public function cargar()
@@ -54,7 +63,7 @@ class Rol{
                 if ($res > 0) {
                     $row = $base->Registro();
                     
-                    $this->setear($row['idrol'], $row['roldescripcion']);
+                    $this->setear($row['idrol'], $row['roldescripcion'], $row['rodeshabilitado']);
                     $resp = true;
                 }
             }
@@ -71,10 +80,11 @@ class Rol{
     {
         $resp = false;
         $base = new BaseDatos();
-        $sql = "INSERT INTO rol (idrol,roldescripcion)
+        $sql = "INSERT INTO rol (idrol,roldescripcion,rodeshabilitado)
         VALUES (
             '',
-            '" . $this->getRolDescripcion() . "'
+            '" . $this->getRolDescripcion() . "',
+            '" . $this->getDeshabilitado() . "'
         )";
 
         if ($base->Iniciar()) {
@@ -98,10 +108,9 @@ class Rol{
         $resp = false;
         $base = new BaseDatos();
         $sql = "UPDATE rol SET
-            idrol = '" . $this->getIdRol() . "',
-            roldescripcion = '" . $this->getRolDescripcion() . "'
+            roldescripcion = '" . $this->getRolDescripcion() . "',
+            rodeshabilitado = '" . $this->getDeshabilitado() . "'
         WHERE idrol = '" . $this->getIdRol() . "'";
-
 
         if ($base->Iniciar()) {
             if ($base->Ejecutar($sql)) {
@@ -154,7 +163,7 @@ class Rol{
                 while ($row = $base->Registro()) {
                     $obj = new Rol();
                 
-                    $obj->setear($row['idrol'], $row['roldescripcion']);
+                    $obj->setear($row['idrol'], $row['roldescripcion'], $row['rodeshabilitado']);
                     array_push($arreglo, $obj);
                 }
                 
@@ -176,7 +185,7 @@ class Rol{
         if ($base->Iniciar()) {
             if ($base->Ejecutar($consulta)) {
                 if ($row = $base->Registro()) {
-                    $this->cargar($row['idrol'], $row['roldescripcion']);
+                    $this->cargar($row['idrol'], $row['roldescripcion'], $row['rodeshabilitado']);
                     $resp = true;
                 }
             } else {
@@ -193,7 +202,8 @@ class Rol{
     {
         $mensaje = 
         "Id rol: " . $this->getIdRol() . "\n" . 
-        "Rol descripcion " . $this->getRolDescripcion() . "\n" ;
+        "Rol descripcion " . $this->getRolDescripcion() . "\n" .
+        "Rol deshabilitado " . $this->getRolDescripcion() . "\n" ;
         return $mensaje;
     }
 }

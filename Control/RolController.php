@@ -15,7 +15,8 @@ class RolController{
         if (isset($param['roldescripcion'])) {
             $id = $param['idrol'] ?? null; // si no existe ese id null porque en realidad acá no viene xq es autoincremental
             $obj = new Rol();
-            $obj->setear($id, $param['roldescripcion']);
+            $rodeshabilitado = array_key_exists('rodeshabilitado', $param) ? $param['rodeshabilitado'] : null; //por si deshabilitado es null q puede pasar
+            $obj->setear($id, $param['roldescripcion'], $rodeshabilitado);
         }
         return $obj;
     }
@@ -30,7 +31,7 @@ class RolController{
 
         if (isset($param['idrol'])) { //creo q solo va la clave de la entidad q está en el sql
             $obj = new Rol();
-            $obj->setear($param['idrol'], null);
+            $obj->setear($param['idrol'], null, null);
         }
         return $obj;
     }
@@ -67,15 +68,32 @@ class RolController{
      */
     public function baja($param)
     {
-        $resp = false;
-        if ($this->seteadosCamposClaves($param)) {
-            $elObjtRol = $this->cargarObjetoConClave($param);
-            if ($elObjtRol != null and $elObjtRol->eliminar()) {
-                $resp = true;
+        // $resp = false;
+        // if ($this->seteadosCamposClaves($param)) {
+        //     $elObjtRol = $this->cargarObjetoConClave($param);
+        //     if ($elObjtRol != null and $elObjtRol->eliminar()) {
+        //         $resp = true;
+        //     }
+        // }
+
+        // return $resp;
+
+        //hago un borrado logico donde deshabilito al rol pero igual guardo el codigo del borrado fisico
+        $resp = false; //bandera
+        if (isset($param['idrol'])) { //si el idrol no es null
+            $lista = $this->buscar(['idrol' => $param['idrol']]); //guardo un arreglo con lo que devuelve buscar que es un array de objetos con el mismo id
+            
+            if (count($lista) > 0) { //si el array no es vacio
+                $objRol = $lista[0]; //recupero un obj usuario
+                
+                $objRol->setDeshabilitado(date("Y-m-d H:i:s")); //seteo la deshabilitacion
+                
+                if ($objRol->modificar()) { //modifico al obj usuario
+                    $resp = true;
+                }
             }
         }
-
-        return $resp;
+        return $resp; //devuelvo true o false
     }
 
     /**
@@ -83,15 +101,32 @@ class RolController{
      */
     public function modificacion($param)
     {
-        //echo "Estoy en modificacion";
-        $resp = false;
-        if ($this->seteadosCamposClaves($param)) {
-            $elObjtRol = $this->cargarObjeto($param);
-            if ($elObjtRol != null and $elObjtRol->modificar()) {
-                $resp = true;
+        {
+            //tuve que modificar la funcion por el action habilitarRol.php
+            $resp = false;
+        
+            if (isset($param['idrol'])) {
+        
+                $lista = $this->buscar(['idrol' => $param['idrol']]);
+                
+                if (count($lista) > 0) {
+                    $objRol = $lista[0];
+        
+                    if (isset($param['roldescripcion'])) {
+                        $objRol->setRolDescripcion($param['roldescripcion']);
+                    }
+                    if (isset($param['rodeshabilitado'])) {
+                        $objRol->setDeshabilitado($param['rodeshabilitado']);
+                    }
+        
+                    if ($objRol->modificar()) {
+                        $resp = true;
+                    }
+                }
             }
+        
+            return $resp;
         }
-        return $resp;
     }
 
     /**
@@ -106,13 +141,15 @@ class RolController{
                 $where .= " and idrol =" . $param['idrol'];
             if (isset($param['roldescripcion']))
                 $where .= " and roldescripcion ='" . $param['roldescripcion'] . "'";
+                if (isset($param['rodeshabilitado']))
+                $where .= " and rodeshabilitado ='" . $param['rodeshabilitado'] . "'";
         }
         $arreglo = Rol::listar($where);
         return $arreglo;
     }
 
     /**
-     * 
+     * esta funcion da el id del rol que entra por parmetro
     */
     public function obtenerRol($descripcion){
         $idRol = false; //bandera

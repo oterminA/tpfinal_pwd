@@ -4,6 +4,7 @@ include_once "../../configuracion.php";
 $objSession = new Session(); //hago un new de sesion porque tengo que guardar los datos del carrito ahí adentro
 $itemsCarrito = $_SESSION['carrito'] ?? []; //hago la variable de lositems del carrito 
 $subtotalGeneral = 0; //incializo en cero
+
 ?>
 
 <div class="container my-4">

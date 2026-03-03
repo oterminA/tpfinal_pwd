@@ -251,3 +251,26 @@ function finalizarCompra() {//funcion js con ajax adentro que usa jquery como co
         });
     }
 }
+
+
+///////////////////////
+/////home pero el nav de rol
+///////////////////////
+$(".btn-cambiar-rol").on("click", function(e) {
+    e.preventDefault();
+    let idRol = $(this).data("rol");
+
+    $.ajax({
+        type: "POST",
+        url: "../Action/elegirRol.php",
+        data: { idrol: idRol },
+        success: function(response) {
+            let res = JSON.parse(response);
+            if (res.success) {
+                window.location.href = "home.php";
+            } else {
+                alert(res.msg);
+            }
+        }
+    });
+});

@@ -71,16 +71,32 @@ class ProductoController
      */
     public function baja($param)
     {
-        $resp = false;
-        if ($this->seteadosCamposClaves($param)) {
-            $elProducto = $this->cargarObjetoConClave($param);
-            if ($elProducto != null and $elProducto->eliminar()) {
+        // $resp = false;
+        // if ($this->seteadosCamposClaves($param)) {
+        //     $elProducto = $this->cargarObjetoConClave($param);
+        //     if ($elProducto != null and $elProducto->eliminar()) {
+        //         $resp = true;
+        //     }
+        // }
+
+        // return $resp;
+    //hago un borrado logico donde deshabilito al producto pero igual guardo el codigo del borrado fisico
+    $resp = false; //bandera
+    if (isset($param['idproducto'])) { //si el idproducto no es null
+        $lista = $this->buscar(['idproducto' => $param['idproducto']]); //guardo un arreglo con lo que devuelve buscar que es un array de objetos con el mismo id
+        
+        if (count($lista) > 0) { //si el array no es vacio
+            $objProducto = $lista[0]; //recupero un obj usuario
+            
+            $objProducto->setProductoDeshabilitado(date("Y-m-d H:i:s")); //seteo la deshabilitacion
+            
+            if ($objProducto->modificar()) { //modifico al obj usuario
                 $resp = true;
             }
         }
-
-        return $resp;
     }
+    return $resp; //devuelvo true o false
+}
 
     /**
      * permite modificar un objeto por la info que llega por paramentro, se ejecuta la funcion de la capa del modelo

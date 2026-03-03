@@ -1,3 +1,8 @@
+<?php
+include_once '../../configuracion.php';
+$objSession = new Session;
+
+?>
 <!DOCTYPE html>
 <!-- ESTE SCRIPT ES PARA LA VISTA PRIVADA, SE LO PUEDE VER CON AUTENTICACIÓN -->
 <html lang="es">

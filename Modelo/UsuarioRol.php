@@ -160,7 +160,7 @@ class UsuarioRol{
     {
         $resp = false;
         $base = new BaseDatos();
-        $sql = "DELETE FROM usuariorol WHERE id='" . $this->getId() . "'";
+        $sql = "DELETE FROM usuariorol WHERE idusuariorol=" . $this->getId();
 
         if ($base->Iniciar()) {
             if ($base->Ejecutar($sql)) {
