@@ -132,3 +132,17 @@ $ctrlCompraItem = new CompraItemController();
 // }else{
 //     echo "error\n";
 // }
+
+
+$paramAltaCE = [
+    'idcompra' => 28,
+    'idcompraestadotipo' => 1,
+    'cefechaini' => date('Y-m-d H:i:s'),
+    'cefechafin' => null
+];
+$alta = $ctrlCompraEstado->alta($paramAltaCE);
+if($alta){
+    echo "ALTA REALIZADA.\n";
+}else{
+echo "ERROR\n";
+}

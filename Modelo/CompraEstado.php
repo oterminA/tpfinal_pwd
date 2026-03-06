@@ -123,9 +123,8 @@ class CompraEstado
     {
         $resp = false;
         $base = new BaseDatos();
-        $sql = "INSERT INTO compraestado(objcompra, idcompraestadotipo, cefechaini, cefechafin)
+        $sql = "INSERT INTO compraestado(idcompra, idcompraestadotipo, cefechaini, cefechafin)
         VALUES (
-            '',
             '" . $this->getObjCompra()->getIdCompra() . "',
             '" . $this->getObjCet()->getIdCompraEstadoTipo() . "',
             '" . $this->getFechaIni() . "',
@@ -155,9 +154,9 @@ class CompraEstado
         $base = new BaseDatos();
         $sql = "UPDATE compraestado SET
             idcompra = '" . $this->getObjCompra()->getIdCompra() . "',
-            idcompraestadotipo = '" . $this->getObjCompraEstadoTipo()->getIdUsuario() . "',
+            idcompraestadotipo = '" . $this->getObjCet()->getIdCompraEstadoTipo() . "',
             cefechaini = '" . $this->getFechaIni() . "',
-            cefechafin = '" . $this->getFechaFin() . "',
+            cefechafin = '" . $this->getFechaFin() . "'
         WHERE idcompraestado = '" . $this->getIdCompraEstado() . "'";
 
         if ($base->Iniciar()) {

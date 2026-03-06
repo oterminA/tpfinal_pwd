@@ -12,7 +12,13 @@ $listaProductos = $ctrlProductos->buscar(null); //traigo todos los productos
         </div>
 
         <div class="row">
-            <?php foreach ($listaProductos as $objProducto) : ?>
+    <?php foreach ($listaProductos as $objProducto) : 
+        $stockActual = $objProducto->getStockProducto();
+        
+        $estaHabilitado = ($objProducto->getProductoDeshabilitado() == null || $objProducto->getProductoDeshabilitado() == '0000-00-00 00:00:00');
+
+        if ($stockActual > 0 && $estaHabilitado) : 
+    ?>
                 <div class="col-md-4 mb-4">
                     <div class="card h-100 shadow-sm"> <img src="<?php echo $objProducto->getProImagen(); ?>" class="card-img-top" alt="<?php echo $objProducto->getNombreProducto(); ?>" style="height: 200px; object-fit: cover;">
 
@@ -28,6 +34,9 @@ $listaProductos = $ctrlProductos->buscar(null); //traigo todos los productos
                         </div>
                     </div>
                 </div>
-            <?php endforeach; ?>
+                <?php 
+        endif; 
+    endforeach; 
+    ?>
         </div>
 </div>

@@ -9,28 +9,37 @@ $listaProductos = $ctrlProductos->buscar(null); //traigo tooodos los productos a
 ?>
 
 <div class="container mt-3">
-        <div class="text-center mb-5">
-            <h1 class="display-4 fw-bold text-info">Catálogo de productos</h1>
-        </div>
+    <div class="text-center mb-5">
+        <h1 class="display-4 fw-bold text-info">Catálogo de productos</h1>
+    </div>
 
-        <div class="row">
-            <?php foreach ($listaProductos as $objProducto) : ?>
-                <div class="col-md-4 mb-4">
-                    <div class="card h-100 shadow-sm"> <img src="<?php echo $objProducto->getProImagen(); ?>" class="card-img-top" alt="<?php echo $objProducto->getNombreProducto(); ?>" style="height: 200px; object-fit: cover;">
+    <div class="row">
+    <?php foreach ($listaProductos as $objProducto) : 
+        $stockActual = $objProducto->getStockProducto();
+        
+        $estaHabilitado = ($objProducto->getProductoDeshabilitado() == null || $objProducto->getProductoDeshabilitado() == '0000-00-00 00:00:00');
 
-                        <div class="card-body d-flex flex-column">
-                            <h5 class="card-title"><?php echo $objProducto->getNombreProducto(); ?></h5>
-                            <p class="card-text text-muted small"><?php echo $objProducto->getDetalleProducto(); ?></p>
-                            <p class="card-text fw-bold fs-5 mt-auto"><?php echo "$" . number_format($objProducto->getPrecioProducto(), 0, ',', '.'); ?></p>
-
-                            <button class="btn btn-info text-white w-100" onclick="agregarAlCarrito(<?php echo $objProducto->getIdProducto(); ?>)">
-                                <i class="bi bi-cart-plus"></i> Añadir al carrito
-                                <!-- acá como es en la privada si puedo poner la funcion js de agregarAlCarrito(id) -->
-                            </button>
-                        </div>
-                    </div>
+        if ($stockActual > 0 && $estaHabilitado) : 
+    ?>
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 shadow-sm"> 
+                <img src="<?php echo $objProducto->getProImagen(); ?>" class="card-img-top" alt="..." style="height: 200px; object-fit: cover;">
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title"><?php echo $objProducto->getNombreProducto(); ?></h5>
+                    <p class="card-text text-muted small"><?php echo $objProducto->getDetalleProducto(); ?></p>
+                    <p class="card-text fw-bold fs-5 mt-auto">
+                        <?php echo "$" . number_format($objProducto->getPrecioProducto(), 0, ',', '.'); ?>
+                    </p>
+                    <button class="btn btn-info text-white w-100" onclick="agregarAlCarrito(<?php echo $objProducto->getIdProducto(); ?>)">
+                        <i class="bi bi-cart-plus"></i> Añadir al carrito
+                    </button>
                 </div>
-            <?php endforeach; ?>
+            </div>
         </div>
+    <?php 
+        endif; 
+    endforeach; 
+    ?>
+</div>
 
 </div>

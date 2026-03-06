@@ -11,15 +11,25 @@ class ProductoController
     private function cargarObjeto($param)
     {
         $obj = null;
-
-        if (isset($param['pronombre']) && isset($param['prodetalle']) && isset($param['procantstock']) && isset($param['proimagen'])) {
-            $id = $param['idproducto'] ?? null; // si no existe ese id null porque en realidad acá no viene xq es autoincremental
-            $precio = $param['proprecio'] ?? null;
-            $deshabilitado = $param['prodeshabilitado'] ?? null; 
-
-            $obj = new Producto();
-            $obj->setear($id, $param['pronombre'], $param['prodetalle'], $param['procantstock'], $precio, $deshabilitado,$param['proimagen']);
+        if (isset($param['idproducto'])) {
+            $lista = $this->buscar(['idproducto' => $param['idproducto']]);
+            if (count($lista) > 0) {
+                $obj = $lista[0];
+            }
         }
+    
+        if ($obj == null) {
+            $obj = new Producto();
+        }
+    
+        if (isset($param['idproducto'])) $obj->setIdProducto($param['idproducto']);
+        if (isset($param['pronombre'])) $obj->setNombreProducto($param['pronombre']);
+        if (isset($param['prodetalle'])) $obj->setDetalleProducto($param['prodetalle']);
+        if (isset($param['procantstock'])) $obj->setStockProducto($param['procantstock']);
+        if (isset($param['proprecio'])) $obj->setPrecioProducto($param['proprecio']);
+        if (isset($param['prodeshabilitado'])) $obj->setProductoDeshabilitado($param['prodeshabilitado']);
+        if (isset($param['proimagen'])) $obj->setProImagen($param['proimagen']);
+    
         return $obj;
     }
 

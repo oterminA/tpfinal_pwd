@@ -99,34 +99,28 @@ class RolController{
     /**
      * permite modificar un objeto por la info que llega por paramentro, se ejecuta la funcion de la capa del modelo
      */
-    public function modificacion($param)
-    {
-        {
-            //tuve que modificar la funcion por el action habilitarRol.php
-            $resp = false;
-        
-            if (isset($param['idrol'])) {
-        
-                $lista = $this->buscar(['idrol' => $param['idrol']]);
-                
-                if (count($lista) > 0) {
-                    $objRol = $lista[0];
-        
-                    if (isset($param['roldescripcion'])) {
-                        $objRol->setRolDescripcion($param['roldescripcion']);
-                    }
-                    if (isset($param['rodeshabilitado'])) {
-                        $objRol->setDeshabilitado($param['rodeshabilitado']);
-                    }
-        
-                    if ($objRol->modificar()) {
-                        $resp = true;
-                    }
+    public function modificacion($param) {
+        $resp = false;
+        if (isset($param['idrol'])) {
+            $lista = $this->buscar(['idrol' => $param['idrol']]);
+            
+            if (count($lista) > 0) {
+                $objRol = $lista[0];
+    
+                if (isset($param['roldescripcion'])) {
+                    $objRol->setRolDescripcion($param['roldescripcion']);
+                }
+    
+                if (array_key_exists('rodeshabilitado', $param)) {
+                    $objRol->setDeshabilitado($param['rodeshabilitado']);
+                }
+    
+                if ($objRol->modificar()) {
+                    $resp = true;
                 }
             }
-        
-            return $resp;
         }
+        return $resp;
     }
 
     /**
@@ -139,9 +133,11 @@ class RolController{
         if ($param <> NULL) {
             if (isset($param['idrol']))
                 $where .= " and idrol =" . $param['idrol'];
-            if (isset($param['roldescripcion']))
-                $where .= " and roldescripcion ='" . $param['roldescripcion'] . "'";
-                if (isset($param['rodeshabilitado']))
+                if (isset($param['roldescripcion']) && !empty($param['roldescripcion'])) {
+                    $descripcion = is_array($param['roldescripcion']) ? $param['roldescripcion'][0] : $param['roldescripcion'];
+                    $where .= " AND roldescripcion = '" . $descripcion . "'"; 
+                }
+            if (isset($param['rodeshabilitado']))
                 $where .= " and rodeshabilitado ='" . $param['rodeshabilitado'] . "'";
         }
         $arreglo = Rol::listar($where);

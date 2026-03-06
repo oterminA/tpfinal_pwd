@@ -110,11 +110,10 @@ class compraitem
     {
         $resp = false;
         $base = new BaseDatos();
-        $sql = "INSERT INTO compraitem(objcompra, idproducto, cicantidad)
+        $sql = "INSERT INTO compraitem(idproducto, idcompra, cicantidad)
         VALUES (
-            '',
-            '" . $this->getObjCompra()->getIdCompra() . "',
             '" . $this->getObjProducto()->getIdProducto() . "',
+            '" . $this->getObjCompra()->getIdCompra() . "',
             '" . $this->getCantidad() . "'
         )";
 
@@ -142,7 +141,7 @@ class compraitem
         $sql = "UPDATE compraitem SET
             idcompra = '" . $this->getObjCompra()->getIdCompra() . "',
             idproducto = '" . $this->getObjProducto()->getIdProducto() . "',
-            cicantidad = '" . $this->getCantidad() . "',
+            cicantidad = '" . $this->getCantidad() . "'
         WHERE idcompraitem = '" . $this->getIdCompraItem() . "'";
 
         if ($base->Iniciar()) {

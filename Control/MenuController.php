@@ -98,35 +98,60 @@ class MenuController
 
         // return $resp;
 
-            //hago un borrado logico donde deshabilito al menu pero igual guardo el codigo del borrado fisico
-    $resp = false; //bandera
-    if (isset($param['idmenu'])) { //si el idmenu no es null
-        $lista = $this->buscar(['idmenu' => $param['idmenu']]); //guardo un arreglo con lo que devuelve buscar que es un array de objetos con el mismo id
-        
-        if (count($lista) > 0) { //si el array no es vacio
-            $objMenu = $lista[0]; //recupero un obj usuario
-            
-            $objMenu->setDeshabilitado(date("Y-m-d H:i:s")); //seteo la deshabilitacion
-            
-            if ($objMenu->modificar()) { //modifico al obj usuario
-                $resp = true;
+        //hago un borrado logico donde deshabilito al menu pero igual guardo el codigo del borrado fisico
+        $resp = false; //bandera
+        if (isset($param['idmenu'])) { //si el idmenu no es null
+            $lista = $this->buscar(['idmenu' => $param['idmenu']]); //guardo un arreglo con lo que devuelve buscar que es un array de objetos con el mismo id
+
+            if (count($lista) > 0) { //si el array no es vacio
+                $objMenu = $lista[0]; //recupero un obj usuario
+
+                $objMenu->setDeshabilitado(date("Y-m-d H:i:s")); //seteo la deshabilitacion
+
+                if ($objMenu->modificar()) { //modifico al obj usuario
+                    $resp = true;
+                }
             }
         }
+        return $resp; //devuelvo true o false
     }
-    return $resp; //devuelvo true o false
-}
 
     /**
      * permite modificar un objeto por la info que llega por paramentro, se ejecuta la funcion de la capa del modelo
      */
     public function modificacion($param)
     {
-        //echo "Estoy en modificacion";
         $resp = false;
-        if ($this->seteadosCamposClaves($param)) {
-            $elMenu = $this->cargarObjeto($param);
-            if ($elMenu != null and $elMenu->modificar()) {
-                $resp = true;
+        if (isset($param['idmenu'])) {
+            $lista = $this->buscar(['idmenu' => $param['idmenu']]);
+
+            if (count($lista) > 0) {
+                $objMenu = $lista[0];
+
+                if (isset($param['menombre'])) {
+                    $objMenu->setNombreMenu($param['menombre']);
+                }
+
+                if (isset($param['medescripcion'])) {
+                    $objMenu->setMenuDescripcion($param['medescripcion']);
+                }
+
+                if (array_key_exists('idpadre', $param)) {
+                    $objPadre = null;
+                    if ($param['idpadre'] != null && $param['idpadre'] != '') {
+                        $objPadre = new Menu();
+                        $objPadre->setIdMenu($param['idpadre']);
+                    }
+                    $objMenu->setObjMenuPadre($objPadre);
+                }
+
+                if (array_key_exists('medeshabilitado', $param)) {
+                    $objMenu->setDeshabilitado($param['medeshabilitado']);
+                }
+
+                if ($objMenu->modificar()) {
+                    $resp = true;
+                }
             }
         }
         return $resp;
@@ -134,33 +159,46 @@ class MenuController
 
 
     /**
+     * esta funcion es para ver si un menu tiene hijos (submeus)
+     */
+    public function tieneHijos($id)
+    {
+        $resp =false;
+        $hijos = $this->buscar(['idpadre' => $id]);
+        if (count($hijos) > 0){
+            $resp = true;
+        }
+        return $resp;
+    }
+
+    /**
      * permite Buscar un objeto usando info que entra por parametro y acá tengo que usarlo así porque no puedo acceder directamente a la info sino que tengo q pasar por el modelo
      * usa una función que viene desde el modelo
      */
     public function Buscar($param)
-{
-    $where = " true ";
-    if ($param <> NULL) {
-        if (isset($param['idmenu']))
-            $where .= " AND idmenu =" . $param['idmenu'];
-        if (isset($param['menombre']))
-            $where .= " AND menombre ='" . $param['menombre'] . "'";
-        if (isset($param['medescripcion']))
-            $where .= " AND medescripcion ='" . $param['medescripcion'] . "'";
-            
-        // CAMBIO CRÍTICO AQUÍ:
-        if (array_key_exists('idpadre', $param)) {
-            if ($param['idpadre'] === null) {
-                $where .= " AND idpadre IS NULL";
-            } else {
-                $where .= " AND idpadre =" . $param['idpadre'];
+    {
+        $where = " true ";
+        if ($param <> NULL) {
+            if (isset($param['idmenu']))
+                $where .= " AND idmenu =" . $param['idmenu'];
+            if (isset($param['menombre']))
+                $where .= " AND menombre ='" . $param['menombre'] . "'";
+            if (isset($param['medescripcion']))
+                $where .= " AND medescripcion ='" . $param['medescripcion'] . "'";
+
+            // CAMBIO CRÍTICO AQUÍ:
+            if (array_key_exists('idpadre', $param)) {
+                if ($param['idpadre'] === null) {
+                    $where .= " AND idpadre IS NULL";
+                } else {
+                    $where .= " AND idpadre =" . $param['idpadre'];
+                }
             }
+
+            if (isset($param['medeshabilitado']))
+                $where .= " AND medeshabilitado ='" . $param['medeshabilitado'] . "'";
         }
-        
-        if (isset($param['medeshabilitado']))
-            $where .= " AND medeshabilitado ='" . $param['medeshabilitado'] . "'";
+        $arreglo = Menu::listar($where);
+        return $arreglo;
     }
-    $arreglo = Menu::listar($where);
-    return $arreglo;
-}
 }

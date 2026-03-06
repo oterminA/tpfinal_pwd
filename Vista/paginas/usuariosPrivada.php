@@ -7,7 +7,7 @@ $ctrlUR = new UsuarioRolController();
 
 <div class="d-flex justify-content-between align-items-center mb-3">
     <h2 class="mb-0">Gestionar información de usuarios</h2>
-    <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#modalNuevoUsuario"><i class="bi bi-person-plus"></i> Nuevo Usuario</button>
+    <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#modalNuevoUsuario"><i class="bi bi-plus-circle"></i></i> Nuevo Usuario</button>
 </div>
 
 <table class="table table-hover shadow-sm bg-white">
@@ -16,6 +16,7 @@ $ctrlUR = new UsuarioRolController();
             <th>ID</th>
             <th>Nombre</th>
             <th>Email</th>
+            <th>Contraseña</th>
             <th>Estado</th>
             <th>Roles</th>
             <th class="text-center">Acciones</th>
@@ -33,6 +34,7 @@ $ctrlUR = new UsuarioRolController();
                 <td><?php echo $objUsuario->getIdUsuario(); ?></td>
                 <td><?php echo $objUsuario->getNombre(); ?></td>
                 <td><?php echo $objUsuario->getMail(); ?></td>
+                <td><?php echo $objUsuario->getContrasenia(); ?></td>
                 <td><?php echo $estado; ?></td>
                 <td>
                     <?php
@@ -182,6 +184,26 @@ $ctrlUR = new UsuarioRolController();
         modal.show();
     }
 
+        //para modificar la info de un usuario
+        $("#formEditarAdmin").on("submit", function(e) { //acá tomo al elemento directamente por su id
+        e.preventDefault(); //evito que se recargue la pagina
+        $.ajax({ //parte de ajax
+            type: "POST", //envio por POST
+            url: "../Action/modificarLogin.php",
+            data: $(this).serialize(), //esto es para que todos los id coincidan y no haya problemas con eso
+            success: function(response) { //como manejar la respuesta
+                let res = JSON.parse(response); //parseo la respuesta qe viene del servidor
+                if (res.success) { //si es positiva
+                    alert("Usuario modificado correctamente"); //alert con el msj de que fue creado el user
+                    location.reload(); //estoe s para que se recargue la pagina y muestre actualizada la lista
+                } else {
+                    alert("Error"); //si la respuesta del servidor fue negativa
+                }
+            }
+        });
+    });
+
+
     //para dar de alta a un usuario
     $("#formAltaAdmin").on("submit", function(e) { //acá tomo al elemento directamente por su id
         e.preventDefault(); //evito que se recargue la pagina
@@ -201,24 +223,6 @@ $ctrlUR = new UsuarioRolController();
         });
     });
 
-    //para modificar la info de un usuario
-    $("#formEditarAdmin").on("submit", function(e) { //acá tomo al elemento directamente por su id
-        e.preventDefault(); //evito que se recargue la pagina
-        $.ajax({ //parte de ajax
-            type: "POST", //envio por POST
-            url: "../Action/modificarLogin.php",
-            data: $(this).serialize(), //esto es para que todos los id coincidan y no haya problemas con eso
-            success: function(response) { //como manejar la respuesta
-                let res = JSON.parse(response); //parseo la respuesta qe viene del servidor
-                if (res.success) { //si es positiva
-                    alert("Usuario modificado correctamente"); //alert con el msj de que fue creado el user
-                    location.reload(); //estoe s para que se recargue la pagina y muestre actualizada la lista
-                } else {
-                    alert("Error"); //si la respuesta del servidor fue negativa
-                }
-            }
-        });
-    });
 
     function eliminarUsuario(id) {
         if (confirm('¿Desea desactivar al usuario?')) { //apartir de lo que acepte o no el user es que manejo las cosas, si el user pone aceptar:

@@ -6,8 +6,8 @@ class Session
 {
 
     /** 
-    * con este constructor lo que hago es que cuando creo una nueva instancia de sesión inmediatamte se hace un session_start
-    */
+     * con este constructor lo que hago es que cuando creo una nueva instancia de sesión inmediatamte se hace un session_start
+     */
     public function __construct()
     {
         if (session_status() !== PHP_SESSION_ACTIVE) {
@@ -28,9 +28,6 @@ class Session
             'uspass'   => $contra
         ]);
 
-        // var_dump($lista);
-        // exit;
-
         if (!empty($lista)) { //si no está vacía esa variable = hay usuario
             $objUsuario = $lista[0]; //busco al primer usuario con esos datos o sea es el que estoy buscando
             $deshabilitado = $objUsuario->getDeshabilitado(); //recupero el estado de deshabilitación
@@ -38,7 +35,9 @@ class Session
                 //si el usuario NO está deshabilitado
                 $_SESSION['idusuario'] = $objUsuario->getIdUsuario(); //guardo en session la info del id del user
                 $_SESSION['usnombre']  = $objUsuario->getNombre();
-                $resp = true; 
+                $_SESSION['usmail']  = $objUsuario->getMail();
+
+                $resp = true;
             }
         }
         return $resp; //retorno true si se valida la autenticacion de credenciales o false si no
@@ -73,12 +72,24 @@ class Session
     }
 
     /**
+     * devuelde el mail del usuario logueado
+     */
+    public function getMail()
+    {
+        $mail = null;
+        if (isset($_SESSION['usmail'])) {
+            $mail = $_SESSION['usmail'];
+        }
+        return $mail;
+    }
+
+    /**
      * deevuelve el id del user logueado
      */
     public function getIdUsuario()
     {
         $id = null;
-        if (isset($_SESSION['idusuario'])) {// si el id no es null
+        if (isset($_SESSION['idusuario'])) { // si el id no es null
             $id = $_SESSION['idusuario'];
         }
         return $id; //retorno null o el id del user
@@ -86,25 +97,45 @@ class Session
 
 
     /**
-     * Devuelve el rol del usuario logueado
+     * Devuelve el rol o rolesss del usuario logueado
      */
     public function getRol()
     {
-        $rolNombre = null; //inicializo en null
-
-        if ($this->validar()) { //si es true es porque la sesión está validada
-            $abmUR = new UsuarioRolController(); //new de abmusuariorol
-            $listaRoles = $abmUR->buscar([ //hago un array de usuarios en usuariorol que tengan el id que está guardaddo en la session
+        $roles = []; //array vacio
+        if ($this->validar()) {
+            $abmUR = new UsuarioRolController(); //new de usuario rol
+            $listaRelaciones = $abmUR->buscar([ //listo los roles que esten asociados a un idsuario
                 'idusuario' => $_SESSION['idusuario']
             ]);
 
-            if (!empty($listaRoles)) { //si no está vacio el array de usuarios
-                $objUsuarioRol = $listaRoles[0]; //recupero un obj usuariorol
-                $objRol = $objUsuarioRol->getObjRol(); //recupero un obj rol
-                $rolNombre = $objRol->getRolDescripcion(); //recupero el tipo de rol que tiene ese obj rol
+            foreach ($listaRelaciones as $objUsuarioRol) { //itero sobre esa lista y guardo los roles en el array
+                $roles[] = $objUsuarioRol->getObjRol();
             }
         }
-        return $rolNombre; //retorno null o el rol de ese obj rol(ejemplo 'admin)
+        return $roles; //vacío con al menos un rol
+    }
+
+    public function getIdRol()
+    {
+        $idRol = null;
+
+        if (isset($_SESSION['idrol'])) {
+            $idRol = $_SESSION['idrol'];
+        } elseif ($this->validar()) {
+            $abmUR = new UsuarioRolController();
+            $listaRoles = $abmUR->buscar([
+                'idusuario' => $_SESSION['idusuario']
+            ]);
+
+            if (!empty($listaRoles)) {
+                $objUsuarioRol = $listaRoles[0];
+                $objRol = $objUsuarioRol->getObjRol();
+                $idRol = $objRol->getIdRol();
+
+                $_SESSION['idrol'] = $idRol;
+            }
+        }
+        return $idRol;
     }
 
     /**

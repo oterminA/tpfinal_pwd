@@ -55,23 +55,23 @@ $idRol = $rolCtrl->obtenerRol($nombreRol); //obtengo el id del rol desde la clas
 
                 <div class="collapse navbar-collapse" id="navbarNav">
 
-                <ul class="navbar-nav ms-auto" id="contenedor-menu">
-    <?php
-    if (is_array($listaMenuRol)) {
-        foreach ($listaMenuRol as $item) {
-            $objMenu = $item->getObjMenu();
-            if ($objMenu->getDeshabilitado() == null) {
-                echo '<li class="nav-item">';
-                echo '  <a class="nav-link" href="javascript:void(0)" onclick="mostrarSeccion(' . $objMenu->getIdMenu() . ')">' . $objMenu->getNombreMenu() . '</a>';
-                echo '</li>';
-            }
-        }
-    }
-    ?>
-    <li class="nav-item">
-        <button class="nav-link text-warning" onclick="cerrarSesion()"> Salir </button>
-    </li>
-</ul>
+                    <ul class="navbar-nav ms-auto" id="contenedor-menu">
+                        <?php
+                        if (is_array($listaMenuRol)) {
+                            foreach ($listaMenuRol as $item) {
+                                $objMenu = $item->getObjMenu();
+                                if ($objMenu->getDeshabilitado() == null) {
+                                    echo '<li class="nav-item">';
+                                    echo '  <a class="nav-link" href="javascript:void(0)" onclick="mostrarSeccion(' . $objMenu->getIdMenu() . ')">' . $objMenu->getNombreMenu() . '</a>';
+                                    echo '</li>';
+                                }
+                            }
+                        }
+                        ?>
+                        <li class="nav-item">
+                            <button class="nav-link text-warning" onclick="cerrarSesion()"> Salir </button>
+                        </li>
+                    </ul>
                 </div>
             </div>
         </nav>
@@ -82,7 +82,7 @@ $idRol = $rolCtrl->obtenerRol($nombreRol); //obtengo el id del rol desde la clas
         <div class="alert alert-info shadow-sm border-0 d-flex align-items-center justify-content-between">
             <div class="d-flex align-items-center">
                 <i class="bi bi-person-circle fs-4 me-2"></i>
-                <strong>¡Bienvenida/o, <?php echo $nombreUsuario; ?>!</strong>
+                <strong>¡Hola <?php echo $nombreUsuario; ?>!</strong>
             </div>
             <div class="dropdown">
                 <button class="btn btn-sm btn-outline-dark dropdown-toggle" type="button" data-bs-toggle="dropdown">
@@ -93,7 +93,7 @@ $idRol = $rolCtrl->obtenerRol($nombreRol); //obtengo el id del rol desde la clas
                     foreach ($_SESSION['roles_poseidos'] as $itemRol) {
                         $objRol = $itemRol->getObjRol();
                         $claseActivo = ($objRol->getIdRol() == $idRolActivo) ? 'active' : '';
-                        echo '<li><a class="dropdown-item btn-cambiar-rol '.$claseActivo.'" href="#" data-rol="'.$objRol->getIdRol().'">'.$objRol->getRolDescripcion().'</a></li>';
+                        echo '<li><a class="dropdown-item btn-cambiar-rol ' . $claseActivo . '" href="#" data-rol="' . $objRol->getIdRol() . '">' . $objRol->getRolDescripcion() . '</a></li>';
                     }
                     ?>
                 </ul>
@@ -106,6 +106,9 @@ $idRol = $rolCtrl->obtenerRol($nombreRol); //obtengo el id del rol desde la clas
                 <!-- si el rol de la persona que tiene la sesion ahora es admin hago todo el resto -->
                 <div class="text-center mb-5">
                     <h1 class="display-4 fw-bold text-info">Inventario de productos</h1>
+                    <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#modalNuevoProducto">
+                        <i class="bi bi-plus-circle"></i> Nuevo Producto
+                    </button>
                 </div>
                 <table class="table table-hover shadow-sm">
                     <thead class="table-dark">
@@ -114,6 +117,8 @@ $idRol = $rolCtrl->obtenerRol($nombreRol); //obtengo el id del rol desde la clas
                             <th>Producto</th>
                             <th>Precio</th>
                             <th>Stock</th>
+                            <th>Imagen</th>
+                            <th>Estado</th>
                             <th class="text-center">Acciones</th>
                         </tr>
                     </thead>
@@ -128,8 +133,27 @@ $idRol = $rolCtrl->obtenerRol($nombreRol); //obtengo el id del rol desde la clas
                                         <!-- acá le puse que si el nro de stock es menor a 10, por poner un nro, que el boton sea danger como para que se distinga, sino que se muestre el boton verde -->
                                         <?php echo $objProducto->getStockProducto(); ?>
                                 </td>
+                                <td><?php echo $objProducto->getProImagen(); ?></td>
+                                <td>
+                                    <?php
+                                    $estado = ($objProducto->getProductoDeshabilitado() == null || $objProducto->getProductoDeshabilitado() == '0000-00-00 00:00:00')
+                                        ? '<span class="badge bg-success">Activo</span>'
+                                        : '<span class="badge bg-danger">Deshabilitado</span>';
+                                    echo $estado; // esto es para manejar el color del badge segun esté habilitado o no el rol y eso puede saberse por el contenido de $estado y haciendo el ternario: si hay fecha está desactivado, si es null está activado
+                                    ?>
+                                </td>
+
                                 <td class="text-center">
-                                    <button class="btn btn-sm btn-warning" onclick="editarProducto(<?php echo $objProducto->getIdProducto(); ?>)"><i class="bi bi-pencil"></i></button>
+                                    <button class="btn btn-sm btn-warning" onclick="modificarProducto(
+    '<?php echo $objProducto->getIdProducto(); ?>', 
+    '<?php echo $objProducto->getNombreProducto(); ?>', 
+    '<?php echo $objProducto->getDetalleProducto(); ?>', 
+    '<?php echo $objProducto->getStockProducto(); ?>', 
+    '<?php echo $objProducto->getPrecioProducto(); ?>', 
+    '<?php echo $objProducto->getProImagen(); ?>'
+)">
+                                        <i class="bi bi-pencil"></i>
+                                    </button>
                                     <!-- acá tengo un boton con una accion que es la funcion js de editarProducto(id) que va a estar en un action gestionada -->
                                     <button class="btn btn-sm btn-danger" onclick="eliminarProducto(<?php echo $objProducto->getIdProducto(); ?>)"><i class="bi bi-trash"></i></button>
                                     <!-- acá tengo un boton con una accion que es la funcion js de eliminarProducto(id) que va a estar en un action gestionada -->
@@ -152,8 +176,12 @@ $idRol = $rolCtrl->obtenerRol($nombreRol); //obtengo el id del rol desde la clas
                     <?php if (count($listaProductos) > 0) : ?>
                         <?php foreach ($listaProductos as $objProducto) :
                             $cantidad = $objProducto->getStockProducto();
-                            if ($cantidad > 12) : //acá lo que hice es que para que se muestren algunos productos y no elegirlos a mano, puse la condicion de que los productos con stock mayor a 12 son los que se muestran en el inicio, como para variar lo que se muestre
-                                $rutaImagen = $objProducto->getProImagen();
+                            $fechaDeshabilitado = $objProducto->getProductoDeshabilitado();
+
+                            $estaHabilitado = ($fechaDeshabilitado == null || $fechaDeshabilitado == '0000-00-00 00:00:00' || $fechaDeshabilitado == '');
+
+                            if ($cantidad > 7 && $estaHabilitado) :
+                                $rutaImagen = $objProducto->getProImagen(); //acá lo que hice es que para que se muestren algunos productos y no elegirlos a mano, puse la condicion de que los productos con stock mayor a 12 son los que se muestran en el inicio, como para variar lo que se muestre
                         ?>
                                 <div class="col-12 col-sm-6 col-md-4 col-lg-3">
                                     <div class="card h-100 shadow-sm border-0">
@@ -200,6 +228,88 @@ $idRol = $rolCtrl->obtenerRol($nombreRol); //obtengo el id del rol desde la clas
         </div>
     </main>
 
+    <!-- modal flotante para la CREACION de productos -->
+    <div class="modal fade" id="modalNuevoProducto" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-dark text-white">
+                    <h5 class="modal-title">Registrar producto (Admin)</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <form id="formAltaProducto" enctype="multipart/form-data">
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label class="form-label">Nombre del producto</label>
+                            <input type="text" name="pronombre" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Descripción</label>
+                            <input type="text" name="prodetalle" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Cantidad de stock</label>
+                            <input type="number" name="procantstock" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Precio</label>
+                            <input type="number" name="proprecio" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Imagen</label>
+                            <input type="file" name="proimagen" class="form-control" required>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary">Crear Producto</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- modal flotante para la EDICION de productos -->
+    <div class="modal fade" id="modalEditarProducto" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-warning">
+                    <h5 class="modal-title">Modificar Producto (ID: <span id="idProductoTitulo"></span>)</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <form id="formEditarProducto" enctype="multipart/form-data">
+                    <div class="modal-body">
+                        <input type="hidden" name="idproducto" id="editar_id">
+
+                        <div class="mb-3">
+                            <label class="form-label">Nombre del producto (opcional)</label>
+                            <input type="text" name="pronombre" class="form-control">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Descripción (opcional)</label>
+                            <input type="text" name="prodetalle" class="form-control">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Cantidad de stock (opcional)</label>
+                            <input type="number" name="procantstock" class="form-control">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Precio (opcional)</label>
+                            <input type="number" name="proprecio" class="form-control">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Imagen (opcional)</label>
+                            <input type="file" name="proimagen" class="form-control">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-warning shadow-sm">Guardar cambios</button>
+                    </div>
+            </div>
+
+            </form>
+        </div>
+    </div>
+    </div>
+
 
     <footer class="bg-dark text-white text-center py-3 mt-5" id="main-header">
         <p>&copy; 2026 MascotaFeliz - TPFINAL PWD</p>
@@ -207,9 +317,121 @@ $idRol = $rolCtrl->obtenerRol($nombreRol); //obtengo el id del rol desde la clas
 
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
-    <script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
     <script src="../js/jquery_ajax.js"></script>
 </body>
 
 </html>
+
+
+
+
+
+
+<script>
+    function modificarProducto(id, nombre, detalle, stock, precio, imagen) {
+        $("#editar_id").val(id);
+        $("#idProductoTitulo").text(id);
+        $("input[name='pronombre']").val(nombre);
+        $("input[name='prodetalle']").val(detalle);
+        $("input[name='procantstock']").val(stock);
+        $("input[name='proprecio']").val(precio);
+
+        var modal = new bootstrap.Modal(document.getElementById('modalEditarProducto'));
+        modal.show();
+    }
+
+    //para modificar la info de un menu
+    $("#formEditarProducto").on("submit", function(e) { //acá tomo al elemento directamente por su id
+        e.preventDefault(); //evito que se recargue la pagina
+        var formData = new FormData(this); //captura TODO el formulario, incluyendo los archivos binarios x esto de q ahora estoy agregando la imagen
+        formData.append('accion', 'modificar');
+        $.ajax({ //parte de ajax
+            type: "POST", //envio por POST
+            url: "../Action/abmProductos.php",
+            data: formData,
+            processData: false, //esto hace que jsquery transforme la data
+            contentType: false,
+            success: function(response) { //como manejar la respuesta
+                let res = JSON.parse(response); //parseo la respuesta qe viene del servidor
+                if (res.success) { //si es positiva
+                    alert("Producto modificado correctamente"); //alert con el msj de que fue creado el user
+                    location.reload(); //estoe s para que se recargue la pagina y muestre actualizada la lista
+                } else {
+                    alert("Error"); //si la respuesta del servidor fue negativa
+                }
+            }
+        });
+    });
+
+
+    //para dar de alta a un menu
+    $("#formAltaProducto").on("submit", function(e) { //acá tomo al elemento directamente por su id
+        e.preventDefault(); //evito que se recargue la pagina
+        var formData = new FormData(this); //captura TODO el formulario, incluyendo los archivos binarios x esto de q ahora estoy agregando la imagen
+        formData.append('accion', 'alta');
+
+        $.ajax({ //parte de ajax
+            type: "POST", //envio por POST
+            url: "../Action/abmProductos.php", //ese es el action que se encarga de gestionar el alta en la parte del servidor
+            data: formData,
+            processData: false, //esto hace que jsquery transforme la data
+            contentType: false,
+            success: function(response) { //como manejar la respuesta
+                let res = JSON.parse(response); //parseo la respuesta qe viene del servidor
+                if (res.success) { //si es positiva
+                    alert("Producto creado correctamente"); //alert con el msj de que fue creado el user
+                    location.reload(); //estoe s para que se recargue la pagina y muestre actualizada la lista
+                } else {
+                    alert("Error"); //si la respuesta del servidor fue negativa
+                }
+            }
+        });
+    });
+
+
+    function eliminarProducto(id) {
+        if (confirm('¿Desea desactivar el producto?')) {
+            $.ajax({
+                type: "POST",
+                url: "../Action/abmProductos.php",
+                data: {
+                    idproducto: id,
+                    accion: 'eliminar'
+                },
+                success: function(response) {
+                    let res = JSON.parse(response); //parseo la respuesta qe viene del servidor
+                    if (res.success) { //si es positiva
+                        alert("Producto desactivado correctamente"); //alert con el msj de que fue desactivado el user
+                        location.reload(); //estoe s para que se recargue la pagina y muestre actualizada la lista
+                    } else {
+                        alert("Error"); //si la respuesta del servidor fue negativa
+                    }
+                }
+            });
+        }
+
+    }
+
+    function habilitarProducto(id) {
+        if (confirm('¿Desea activar el producto?')) { //apartir de lo que acepte o no el user es que manejo las cosas, si el user pone aceptar:
+            $.ajax({ //parte de ajax
+                type: "POST", //envio por POST
+                url: "../Action/abmProductos.php", //action que va a gestionar la habilitacion por parte del servidor
+                data: {
+                    idproducto: id,
+                    accion: 'habilitar'
+                },
+                //id del user a habilitar
+                success: function(response) { //como manejar la respuesta
+                    let res = JSON.parse(response); //parseo la respuesta qe viene del servidor
+                    if (res.success) { //si es positiva
+                        alert("Producto activado correctamente"); //alert con el msj de que fue activado el user
+                        location.reload(); //estoe s para que se recargue la pagina y muestre actualizada la lista
+                    } else {
+                        alert("Error"); //si la respuesta del servidor fue negativa
+                    }
+                }
+            });
+        }
+    }
+</script>

@@ -166,12 +166,18 @@ class Producto
     {
         $resp = false;
         $base = new BaseDatos();
+        $fecha = $this->getProductoDeshabilitado();
+        if ($fecha == null || $fecha == '0000-00-00 00:00:00' || trim($fecha) == '') {
+            $prodeshabilitado = "NULL";
+        } else {
+            $prodeshabilitado = "'" . $fecha . "'";
+        }
         $sql = "UPDATE producto 
         SET pronombre='" . $this->getNombreProducto() . "', 
             prodetalle='" . $this->getDetalleProducto() . "', 
             procantstock='" . $this->getStockProducto() . "',
             proprecio='" . $this->getPrecioProducto() . "',
-            prodeshabilitado='" . $this->getProductoDeshabilitado() . "',
+            prodeshabilitado=" . $prodeshabilitado . ",
             proimagen='" . $this->getProImagen() . "'
 
         WHERE idproducto='" . $this->getIdProducto() . "'";

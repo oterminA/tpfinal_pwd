@@ -94,7 +94,6 @@ class Menu
                 $row = $base->Registro();
     
                 $objmenupadre = null;
-                // IMPORTANTE: Usar 'idpadre', no 'idmenu'
                 if (isset($row['idpadre']) && $row['idpadre'] != null && $row['idpadre'] != 0) {
                     $objmenupadre = new Menu();
                     $objmenupadre->setIdMenu($row['idpadre']);
@@ -152,14 +151,21 @@ class Menu
     {
         $resp = false;
         $base = new BaseDatos();
-        $sql = "UPDATE menu SET
-            menombre = '" . $this->getNombreMenu() . "',
-            medescripcion = '" . $this->getMenuDescripcion() . "',
-            idpadre = '" . $this->getObjMenuPadre()->getIdMenu() . "',
-            medeshabilitado = '" . $this->getDeshabilitado() . "'
-        WHERE idmenu = '" . $this->getIdMenu() . "'";
-
-
+    
+        $idPadre = "NULL";
+        if ($this->getObjMenuPadre() != null) {
+            $idPadre = $this->getObjMenuPadre()->getIdMenu();
+        }
+    
+        $fechaDes = ($this->getDeshabilitado() == null) ? "NULL" : "'" . $this->getDeshabilitado() . "'";
+    
+        $sql = "UPDATE menu SET 
+                menombre = '" . $this->getNombreMenu() . "', 
+                medescripcion = '" . $this->getMenuDescripcion() . "', 
+                idpadre = " . $idPadre . ", 
+                medeshabilitado = " . $fechaDes . " 
+                WHERE idmenu = " . $this->getIdMenu();
+    
         if ($base->Iniciar()) {
             if ($base->Ejecutar($sql)) {
                 $resp = true;

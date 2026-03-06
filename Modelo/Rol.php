@@ -1,6 +1,7 @@
 <?php
 //el modelo consulta directamente con la base de datos y le puede llegar a pasar info al control
-class Rol{
+class Rol
+{
     private $idRol;
     private $rolDescripcion;
     private $rodeshabilitado;
@@ -8,19 +9,22 @@ class Rol{
 
     public function __construct()
     {
-        $this-> idRol= "";
-        $this-> rolDescripcion= "";
-        $this-> rodeshabilitado= "";
+        $this->idRol = "";
+        $this->rolDescripcion = "";
+        $this->rodeshabilitado = "";
         $this->mensajeBD = "";
     }
 
-    public function getIdRol(){
+    public function getIdRol()
+    {
         return $this->idRol;
     }
-    public function getRolDescripcion(){
+    public function getRolDescripcion()
+    {
         return $this->rolDescripcion;
     }
-    public function getDeshabilitado(){
+    public function getDeshabilitado()
+    {
         return $this->rodeshabilitado;
     }
     public function getmensajeoperacion()
@@ -29,14 +33,17 @@ class Rol{
     }
 
 
-    public function setIdRol($idRol){
-        $this->idRol=$idRol;
+    public function setIdRol($idRol)
+    {
+        $this->idRol = $idRol;
     }
-    public function setRolDescripcion($rolDescripcion){
-        $this->rolDescripcion=$rolDescripcion;
+    public function setRolDescripcion($rolDescripcion)
+    {
+        $this->rolDescripcion = $rolDescripcion;
     }
-    public function setDeshabilitado($rodeshabilitado){
-        $this->rodeshabilitado=$rodeshabilitado;
+    public function setDeshabilitado($rodeshabilitado)
+    {
+        $this->rodeshabilitado = $rodeshabilitado;
     }
     public function setmensajeoperacion($mensajeBD)
     { //lo que se muestra si hay o no algun error xq es una variable que viene desde la bd
@@ -56,13 +63,13 @@ class Rol{
         $resp = false;
         $base = new BaseDatos();
         $sql = "SELECT * FROM rol WHERE idrol = '" . $this->getIdRol() . "'";
-    
+
         if ($base->Iniciar()) {
             $res = $base->Ejecutar($sql);
             if ($res > -1) {
                 if ($res > 0) {
                     $row = $base->Registro();
-                    
+
                     $this->setear($row['idrol'], $row['roldescripcion'], $row['rodeshabilitado']);
                     $resp = true;
                 }
@@ -73,9 +80,9 @@ class Rol{
         return $resp;
     }
 
-        /**
+    /**
      * crea una cadena SQL que corresponde a un INSERT
-    */
+     */
     public function insertar()
     {
         $resp = false;
@@ -100,17 +107,25 @@ class Rol{
         return $resp;
     }
 
-        /**
+    /**
      *se crea una consulta SQL del tipo UPDATE
-    */
+     */
     public function modificar()
     {
         $resp = false;
         $base = new BaseDatos();
+
+        $fechaDeshabilitado = $this->getDeshabilitado();
+        if ($fechaDeshabilitado == null || $fechaDeshabilitado == "") {
+            $valorFecha = "NULL";
+        } else {
+            $valorFecha = "'" . $fechaDeshabilitado . "'";
+        }
+
         $sql = "UPDATE rol SET
             roldescripcion = '" . $this->getRolDescripcion() . "',
-            rodeshabilitado = '" . $this->getDeshabilitado() . "'
-        WHERE idrol = '" . $this->getIdRol() . "'";
+            rodeshabilitado = " . $valorFecha . " 
+            WHERE idrol = " . $this->getIdRol();
 
         if ($base->Iniciar()) {
             if ($base->Ejecutar($sql)) {
@@ -118,15 +133,13 @@ class Rol{
             } else {
                 $this->setmensajeoperacion("rol->modificar: " . $base->getError());
             }
-        } else {
-            $this->setmensajeoperacion("rol->modificar: " . $base->getError());
         }
         return $resp;
     }
 
-        /**
+    /**
      * recibe una consulta SQL del tipo DELETE
-    */
+     */
     public function eliminar()
     {
         $resp = false;
@@ -135,7 +148,7 @@ class Rol{
 
         if ($base->Iniciar()) {
             if ($base->Ejecutar($sql)) {
-                $resp= true;
+                $resp = true;
             } else {
                 $this->setmensajeoperacion("rol->eliminar: " . $base->getError());
             }
@@ -145,9 +158,9 @@ class Rol{
         return $resp;
     }
 
-        /**
+    /**
      * es como un select con una condición, devuelve el arreglo de esa consulta o null
-    */
+     */
     public static function listar($parametro = "")
     {
         $arreglo = array();
@@ -162,11 +175,10 @@ class Rol{
 
                 while ($row = $base->Registro()) {
                     $obj = new Rol();
-                
+
                     $obj->setear($row['idrol'], $row['roldescripcion'], $row['rodeshabilitado']);
                     array_push($arreglo, $obj);
                 }
-                
             }
         } else {
             self::setmensajeoperacion("rol->listar: " . $base->getError()); //la misma forma de arreglar ese error que antes?
@@ -174,9 +186,9 @@ class Rol{
         return $arreglo;
     }
 
-        /**
+    /**
      * recibe un id como parametro y ejecuta la consulta del SELECT buscando lo que coincida con la informacion
-    */
+     */
     public function buscar($idRol)
     {
         $base = new BaseDatos();
@@ -200,12 +212,10 @@ class Rol{
     //to string
     public function __toString()
     {
-        $mensaje = 
-        "Id rol: " . $this->getIdRol() . "\n" . 
-        "Rol descripcion " . $this->getRolDescripcion() . "\n" .
-        "Rol deshabilitado " . $this->getRolDescripcion() . "\n" ;
+        $mensaje =
+            "Id rol: " . $this->getIdRol() . "\n" .
+            "Rol descripcion " . $this->getRolDescripcion() . "\n" .
+            "Rol deshabilitado " . $this->getRolDescripcion() . "\n";
         return $mensaje;
     }
 }
-
-?>  

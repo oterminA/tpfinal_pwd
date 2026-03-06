@@ -15,7 +15,7 @@ if (!$idrol) { //si no hay ningun id
     
     $param = [ //armo el parametro
         'idrol' => $idrol,
-        'rodeshabilitado' => null // null = habilitado
+        'rodeshabilitado' => NULL // null = habilitado
     ];
     
     $resultado = $objControl->modificacion($param); //le paso ese parametro a moficiar para cambiar su estado

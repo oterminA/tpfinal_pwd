@@ -40,17 +40,20 @@ $listaProductos = $ctrlProductos->buscar(null); //traigo todos los productos que
     <main id="contenido-publico" class="container mt-4">
         <div class="text-center mb-5">
             <h1 class="display-4 fw-bold text-info">MascotaFeliz</h1>
-            <h2 class=" text-info">Tenemos lo mejor para tu mascota</h2>
-            <h4 class=" text-info">Novedades de la semana</h4>
+            <h2 class=" text-black">Tenemos lo mejor para tu mascota</h2>
+            <h4 class=" text-black">Novedades de la semana</h4>
         </div>
 
         <div class="row g-4">
             <?php if (count($listaProductos) > 0) : ?>
                 <?php foreach ($listaProductos as $objProducto) :
                     $cantidad = $objProducto->getStockProducto();
-                    if ($cantidad > 11) :
-                        //acá lo que hice es que para que se muestren algunos productos y no elegirlos a mano, puse la condicion de que los productos con stock mayor a 11 son los que se muestran en el inicio, como para variar lo que se muestre
-                        $rutaImagen = $objProducto->getProImagen();
+                    $fechaDeshabilitado = $objProducto->getProductoDeshabilitado();
+
+                    $estaHabilitado = ($fechaDeshabilitado == null || $fechaDeshabilitado == '0000-00-00 00:00:00' || $fechaDeshabilitado == '');
+
+                    if ($cantidad > 7 && $estaHabilitado) :
+                        $rutaImagen = $objProducto->getProImagen(); //acá lo que hice es que para que se muestren algunos productos y no elegirlos a mano, puse la condicion de que los productos con stock mayor a 12 son los que se muestran en el inicio, como para variar lo que se muestre
                 ?>
                         <div class="col-12 col-sm-6 col-md-4 col-lg-3">
                             <div class="card h-100 shadow-sm border-0">

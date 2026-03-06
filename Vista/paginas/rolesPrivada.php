@@ -6,7 +6,7 @@ $listaRoles = $ctrlRol->buscar(null);
 
 <div class="d-flex justify-content-between align-items-center mb-3">
     <h2 class="mb-0">Gestionar información de roles</h2>
-    <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#modalNuevoRol"><i class="bi bi-person-plus"></i> Nuevo Rol</button>
+    <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#modalNuevoRol"><i class="bi bi-plus-circle"></i></i> Nuevo Rol</button>
 </div>
 
 <table class="table table-hover shadow-sm bg-white">
@@ -21,18 +21,18 @@ $listaRoles = $ctrlRol->buscar(null);
     <tbody>
         <tr>
             <?php foreach ($listaRoles as $objRol) :
-            $estado = ($objRol->getDeshabilitado() == null || $objRol->getDeshabilitado() == '0000-00-00 00:00:00')
-                ? '<span class="badge bg-success">Activo</span>'
-                : '<span class="badge bg-danger">Deshabilitado</span>';
-            // esto es para manejar el color del badge segun esté habilitado o no el rol y eso puede saberse por el contenido de $estado y haciendo el ternario: si hay fecha está desactivado, si es null está activado
+                $estado = ($objRol->getDeshabilitado() == null || $objRol->getDeshabilitado() == '0000-00-00 00:00:00')
+                    ? '<span class="badge bg-success">Activo</span>'
+                    : '<span class="badge bg-danger">Deshabilitado</span>';
+                // esto es para manejar el color del badge segun esté habilitado o no el rol y eso puede saberse por el contenido de $estado y haciendo el ternario: si hay fecha está desactivado, si es null está activado
             ?>
                 <td><?php echo $objRol->getIdRol(); ?></td>
                 <td><?php echo $objRol->getRolDescripcion(); ?></td>
                 <td><?php echo $estado; ?></td>
                 <td class="text-center">
-                    <button class="btn btn-sm btn-warning" onclick="modificarRoles(<?php echo $objRol->getIdRol(); ?>, '<?php echo $objRol->getRolDescripcion(); ?>')">
+                    <button class="btn btn-sm btn-warning" onclick="modificarRol(<?php echo $objRol->getIdRol(); ?>, '<?php echo $objRol->getRolDescripcion(); ?>')">
                         <i class="bi bi-pencil"></i>
-                    </button><!-- acá tengo un boton con una accion que es la funcion js de modificarRoles(id) que va a estar en un action gestionada -->
+                    </button><!-- acá tengo un boton con una accion que es la funcion js de modificarRol(id) que va a estar en un action gestionada -->
                     <button class="btn btn-sm btn-danger" onclick="eliminarRol(<?php echo $objRol->getIdRol(); ?>)"><i class="bi bi-trash"></i></button>
                     <!-- acá tengo un boton con una accion que es la funcion js de eliminarRol(id) que va a estar en un action gestionada -->
 
@@ -76,7 +76,7 @@ $listaRoles = $ctrlRol->buscar(null);
                 <h5 class="modal-title">Modificar Rol (ID: <span id="idRolTitulo"></span>)</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
-            <form id="formEditarAdmin">
+            <form id="formEditarRol">
                 <div class="modal-body">
                     <input type="hidden" name="idrol" id="editar_id">
                     <div class="mb-3">
@@ -96,15 +96,34 @@ $listaRoles = $ctrlRol->buscar(null);
 
 
 <script>
-    function modificarRoles(id, nombre) {
+    function modificarRol(id, nombre) {
         $("#editar_id").val(id);
         $("#idRolTitulo").text(id);
-
-        $(".check-rol").prop("checked", false);
+        $("#editar_descripcion").val(nombre);
 
         var modal = new bootstrap.Modal(document.getElementById('modalEditarRol'));
         modal.show();
     }
+
+    //para modificar la info de un rol
+    $("#formEditarRol").on("submit", function(e) { //acá tomo al elemento directamente por su id
+        e.preventDefault(); //evito que se recargue la pagina
+        $.ajax({ //parte de ajax
+            type: "POST", //envio por POST
+            url: "../Action/modificarRol.php",
+            data: $(this).serialize(), //esto es para que todos los id coincidan y no haya problemas con eso
+            success: function(response) { //como manejar la respuesta
+                let res = JSON.parse(response); //parseo la respuesta qe viene del servidor
+                if (res.success) { //si es positiva
+                    alert("Rol modificado correctamente"); //alert con el msj de que fue creado el rol
+                    location.reload(); //estoe s para que se recargue la pagina y muestre actualizada la lista
+                } else {
+                    alert("Error"); //si la respuesta del servidor fue negativa
+                }
+            }
+        });
+    });
+
 
     //para dar de alta a un rol
     $("#formAltaRol").on("submit", function(e) { //acá tomo al elemento directamente por su id
@@ -116,7 +135,7 @@ $listaRoles = $ctrlRol->buscar(null);
             success: function(response) { //como manejar la respuesta
                 let res = JSON.parse(response); //parseo la respuesta qe viene del servidor
                 if (res.success) { //si es positiva
-                    alert("Rol creado correctamente"); //alert con el msj de que fue creado el user
+                    alert("Rol creado correctamente"); //alert con el msj de que fue creado el rol
                     location.reload(); //estoe s para que se recargue la pagina y muestre actualizada la lista
                 } else {
                     alert("Error"); //si la respuesta del servidor fue negativa
@@ -126,8 +145,9 @@ $listaRoles = $ctrlRol->buscar(null);
     });
 
 
+
     function eliminarRol(id) {
-        if (confirm('¿Desea desactivar el rol?')) { //apartir de lo que acepte o no el user es que manejo las cosas, si el user pone aceptar:
+        if (confirm('¿Desea desactivar el rol?')) { //apartir de lo que acepte o no el rol es que manejo las cosas, si el rol pone aceptar:
             $.ajax({ //parte de ajax
                 type: "POST", //envio por POST
                 url: "../Action/eliminarRol.php", //el servidor va a manejar los datos a través de este action
@@ -137,7 +157,7 @@ $listaRoles = $ctrlRol->buscar(null);
                 success: function(response) { //como manejar la respuesta
                     let res = JSON.parse(response); //parseo la respuesta qe viene del servidor
                     if (res.success) { //si es positiva
-                        alert("Rol desactivado correctamente"); //alert con el msj de que fue desactivado el user
+                        alert("Rol desactivado correctamente"); //alert con el msj de que fue desactivado el rol
                         location.reload(); //estoe s para que se recargue la pagina y muestre actualizada la lista
                     } else {
                         alert("Error"); //si la respuesta del servidor fue negativa
