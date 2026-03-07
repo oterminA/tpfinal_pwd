@@ -6,13 +6,13 @@ $res = ['success' => false, 'msg' => ''];
 if (isset($datos['accion'])) {
     $objSession = new Session();
     $objCtrlProd = new ProductoController();
+    $objCtrlItem = new CompraItemController();
 
     switch ($datos['accion']) {
         case 'agregar':
             $id = $datos['idproducto'];
             $lista = $objCtrlProd->buscar(['idproducto' => $id]);
             $objCtrlCompra = new CompraController();
-            $objCtrlItem = new CompraItemController();
             $objCtrlCEstado = new CompraEstadoController();
 
             if (count($lista) > 0) {
@@ -126,8 +126,10 @@ if (isset($datos['accion'])) {
 
 
         case 'finalizar':
-            $idCompra = $datos['idcompra'] ?? null;
+            $idCompra = $datos['idcompra'];
             $objCtrlCEstado = new CompraEstadoController();
+            $objCtrlProd = new ProductoController();
+            $objCtrlItem = new CompraItemController();
             $ahora = date('Y-m-d H:i:s');
             $success = false;
 
@@ -150,6 +152,7 @@ if (isset($datos['accion'])) {
                     ];
 
                     if ($objCtrlCEstado->modificacion($paramModCE)) {
+
                         $paramAlta = [
                             'idcompra' => $idCompra,
                             'idcompraestadotipo' => 2,
@@ -158,6 +161,24 @@ if (isset($datos['accion'])) {
                         ];
 
                         if ($objCtrlCEstado->alta($paramAlta)) {
+                            $listaCompraItem = $objCtrlItem->buscar(['idcompra' => $idCompra]);
+
+                            foreach ($listaCompraItem as $objCompraItem) {
+                                $objProducto = $objCompraItem->getObjProducto();
+                                $cantidadComprada = $objCompraItem->getCantidad();
+                                $stockActual = $objProducto->getStockProducto();
+
+                                $stockNuevo = $stockActual - $cantidadComprada;
+
+                                $objCtrlProd->modificacion([
+                                    'idproducto' => $objProducto->getIdProducto(),
+                                    'procantstock' => $stockNuevo
+                                ]);
+                            }
+
+                            $objCompra = $objCtrlCompra->buscar(['idcompra' => $idCompra])[0];
+                            MailerControl::enviarCorreoEstado($objCompra, "Aceptada (En preparación)");
+
                             $success = true;
                         }
                     }
@@ -166,12 +187,13 @@ if (isset($datos['accion'])) {
 
             if ($success) {
                 $res['success'] = true;
+                $res['msg'] = "Compra finalizada con éxito.";
             } else {
                 $res['success'] = false;
-                $res['msg'] = "Fallo en el paso final. idCompra: " . $idCompra;
+                $res['msg'] = "No se pudo finalizar la compra.";
             }
             break;
     }
-}
 
-echo json_encode($res);
+    echo json_encode($res);
+}

@@ -1,10 +1,17 @@
 <?php
 include_once '../../configuracion.php';
 
-$objCtrlCompraEstado = new CompraEstadoController(); //relaciona compra-producto y compraestadotipo
-$objCtrlCompraItem = new CompraItemController(); //relaciona compra y producto
+$objCtrlCompraEstado = new CompraEstadoController();
+$objCtrlCompraItem = new CompraItemController();
 
-$comprasPendientes = $objCtrlCompraEstado->buscar(['idcompraestadotipo' => 2, 'cefechafin' => null]); //recupero las comrpas de comrpaestado cuyo estado es aceptada y que no tienenfecha de fin
+$todosLosEstadosActuales = $objCtrlCompraEstado->buscar(['idcompraestadotipo' => 2, 'cefechafin' => '0000-00-00 00:00:00']); //NO BORRAR ESTO QUE ES LO QUE HACE QUE SE QUEDEN SOLO LOS ESTADOS QUE QUIERO Y QUE NO SE DUPLIQUEEEN
+
+$comprasGestion = [];
+foreach ($todosLosEstadosActuales as $objCompraEstado) {
+    if ($objCompraEstado->getObjCet()->getIdCompraEstadoTipo() != 1) {
+        $comprasGestion[] = $objCompraEstado;
+    }
+}
 ?>
 
 <div class="d-flex justify-content-between align-items-center mb-3">
@@ -17,49 +24,60 @@ $comprasPendientes = $objCtrlCompraEstado->buscar(['idcompraestadotipo' => 2, 'c
             <th>ID Compra</th>
             <th>Usuario que compró</th>
             <th>Productos</th>
-            <th>Fecha Aceptada</th>
+            <th>Fecha Estado</th>
             <th>Estado Actual</th>
             <th class="text-center">Acciones</th>
         </tr>
     </thead>
     <tbody>
-        <?php if (count($comprasPendientes) > 0) : ?> 
-            <!-- si haycompras pendientes en compraestado -->
-            <?php foreach ($comprasPendientes as $objCompraEstado) : 
-            // itero sobre cada obj compra estado
-                $objCompra = $objCompraEstado->getObjCompra(); //recupero el obj compras que está delegado 
-                $listaItems = $objCtrlCompraItem->buscar(['idcompra' => $objCompra->getIdCompra()]); //en compra item busco el id de la compra de arriba
-                $usuarioCompro = $objCompra->getObjUsuario()->getNombre(); //recupero desde el obj compra el nombre del user que hizo la compra
+        <?php if (count($comprasGestion) > 0) : ?>
+            <?php foreach ($comprasGestion as $objCompraEstado) :
+                $objCompra = $objCompraEstado->getObjCompra();
+                $listaItems = $objCtrlCompraItem->buscar(['idcompra' => $objCompra->getIdCompra()]);
+                $usuarioCompro = $objCompra->getObjUsuario()->getNombre();
+                $idEstado = $objCompraEstado->getObjCet()->getIdCompraEstadoTipo();
             ?>
                 <tr>
                     <td><span class="fw-bold"><?php echo $objCompra->getIdCompra(); ?></span></td>
-                    <!-- desde el obj compra recupero su id -->
                     <td><?php echo $usuarioCompro; ?></td>
                     <td>
                         <ul class="small mb-0">
                             <?php foreach ($listaItems as $item) : ?>
-                                <!-- itero sobre los objetos de compra items y voy recuperando uno auno -->
-                                <li><?php echo $item->getObjProducto()->getNombreProducto() . " (Cant: " . $item->getCantidad() . ")"; ?></li>
-                                <!-- //de ese item de compra item recupero el obj producto relacionado y el nombre de ese obj producto, despues del obj item recupero la cantidad que pidió el user -->
+                                <li><?php echo $item->getObjProducto()->getNombreProducto() . " (x" . $item->getCantidad() . ")"; ?></li>
                             <?php endforeach; ?>
                         </ul>
                     </td>
                     <td><?php echo $objCompraEstado->getFechaIni(); ?></td>
-                    <td><span class="badge bg-primary">Aceptada</span></td>
+                    <td>
+                        <?php switch ($idEstado) {
+                            case 2:
+                                echo '<span class="badge bg-success">Aceptada</span>';
+                                break;
+                            case 3:
+                                echo '<span class="badge bg-primary">Enviada</span>';
+                                break;
+                            case 4:
+                                echo '<span class="badge bg-danger">Cancelada</span>';
+                                break;
+                        } ?>
+                    </td>
                     <td class="text-center">
-                        <button class="btn btn-sm btn-success" onclick="despacharCompra(<?php echo $objCompra->getIdCompra(); ?>)">
-                             Despachar compra
-                        </button>
-                        
-                        <button class="btn btn-sm btn-danger" onclick="cancelarCompra(<?php echo $objCompra->getIdCompra(); ?>)">
-                             Cancelar compra
-                        </button>
+                        <?php if ($idEstado == 2) : ?>
+                            <button class="btn btn-sm btn-primary" onclick="despacharCompra(<?php echo $objCompra->getIdCompra(); ?>)">
+                                Despachar
+                            </button>
+                            <button class="btn btn-sm btn-danger" onclick="cancelarCompra(<?php echo $objCompra->getIdCompra(); ?>)">
+                                Cancelar
+                            </button>
+                        <?php else : ?>
+                            <span class="text-muted small">Sin acciones disponibles</span>
+                        <?php endif; ?>
                     </td>
                 </tr>
             <?php endforeach; ?>
         <?php else : ?>
             <tr>
-                <td colspan="6" class="text-center p-4 text-muted">No hay pedidos pendientes de despacho.</td>
+                <td colspan="6" class="text-center p-4 text-muted">No hay pedidos para gestionar.</td>
             </tr>
         <?php endif; ?>
     </tbody>
@@ -67,20 +85,20 @@ $comprasPendientes = $objCtrlCompraEstado->buscar(['idcompraestadotipo' => 2, 'c
 
 <script>
     function despacharCompra(idC) {
-        confirm("¿Confirmar despacho del pedido?");
-        
-        if (confirm) {
+        let respuesta = confirm("¿Confirmar envío del pedido?");
+
+        if (respuesta) {
             $.ajax({
                 type: "POST",
-                url: '../Action/gestionDeposito.php', 
-                data: { 
-                    accion: accion, 
-                    idcompra: idC 
+                url: '../Action/pedidos.php',
+                data: {
+                    accion: 'despachar',
+                    idcompra: idC
                 },
                 success: function(response) {
                     let res = JSON.parse(response);
                     if (res.success) {
-                        alert("Pedido actualizado correctamente");
+                        alert("Pedido enviado correctamente.");
                         location.reload();
                     } else {
                         alert("Error");
@@ -91,19 +109,19 @@ $comprasPendientes = $objCtrlCompraEstado->buscar(['idcompraestadotipo' => 2, 'c
     }
 
     function cancelarCompra(idC) {
-       confirm("¿Estás seguro de cancelar esta compra? El stock será devuelto a la tienda.");
-        if (confirm) {
+        let respuesta = confirm("¿Quiere de cancelar esta compra? El item será devuelto a la tienda.");
+        if (respuesta) {
             $.ajax({
                 type: "POST",
-                url: '../Action/gestionDeposito.php', 
-                data: { 
-                    accion: accion, 
-                    idcompra: idC 
+                url: '../Action/pedidos.php',
+                data: {
+                    accion: 'cancelar',
+                    idcompra: idC
                 },
                 success: function(response) {
                     let res = JSON.parse(response);
                     if (res.success) {
-                        alert("Pedido cancelado y devuelto a la tienda correctamente");
+                        alert("Pedido cancelado. El stock ha sido reintegrado.");
                         location.reload();
                     } else {
                         alert("Error");

@@ -10,11 +10,11 @@ if (isset($datos['accion'])) { //acá obtengo lo que sea que tiene que hacerse x
         case 'habilitar':
             $param = [
                 'idproducto' => $datos['idproducto'],
-                'prodeshabilitado' => '0000-00-00 00:00:00'
+                'prodeshabilitado' => '0000-00-00 00:00:00' //revisar cómo hago acá para los que reciben si o si null
             ];
 
-            $resultado = $objProductoCtrl->modificacion($param);
-            if ($resultado) {
+            $resultado = $objProductoCtrl->modificacion($param); //hago la modificacion
+            if ($resultado) { //si se hizo
                 $res['success'] = true;
                 $res['msg'] = 'Producto habilitado';
             } else {
@@ -57,10 +57,10 @@ if (isset($datos['accion'])) { //acá obtengo lo que sea que tiene que hacerse x
             break;
 
         case 'alta':
-            $existe = $objProductoCtrl->buscar(['pronombre' => $datos['pronombre']]);
-            if (count($existe) > 0) {
+            $existe = $objProductoCtrl->buscar(['pronombre' => $datos['pronombre']]); //reviso q exista el producto
+            if (count($existe) > 0) { //si ya existe mando ese mensaje porque el producto no puede darse de alta si ya exits
                 $res['msg'] = 'El producto ya existe.';
-            } else {
+            } else { //si NO existe el producto en la bd
                 if (isset($_FILES['proimagen']) && $_FILES['proimagen']['error'] === UPLOAD_ERR_OK) { //acá me fijo si llegó la imagen y si llegó sin errores
                     $dir = "../css/Assets/";
                     $nombreArchivo = time() . "_" . $_FILES['proimagen']['name']; //time es para evitar duplicados de imagenes xq si tienen el mismo nombre se sobreescriben

@@ -94,13 +94,13 @@ function mostrarSeccion(id) { //funcion js que tiene el swtich para mostrar el c
         case 27:
             archivo = "pedidosPrivada.php";
             break; //para deposito
-        default: archivo = "home.php";
+        // default: archivo = "home.php";
     }
 
-    // if (archivo === "") {
-    //     alert("La sección con ID aún no tiene un script asignado.");
-    //     return; //
-    // }
+    if (archivo === "") {
+        alert("La sección con ID aún no tiene un script asignado.");
+        return; //esto es para cuandocreo un menú nuevo y no tiene contenido
+    }
 
     $.ajax({ //codigo ajax
         url: archivo, //la url es el archivo que queda indicado arriba
@@ -189,7 +189,8 @@ $(document).ready(function () { //cuando se cargue todo el documento se ejecuta 
 /////carritoprivada
 ///////////////////////
 function eliminarDelCarrito(idcompraitem, idproducto) { //funcion js con ajax adentro que usa jquery como codigo
-    if (confirm("¿Seguro que queres sacar este producto?")) {
+    $respuesta = confirm("¿Seguro que queres sacar este producto?");
+    if ($respuesta) {
         $.ajax({
             url: '../Action/carrito.php', //el action q va a manejar el control, el modelo y las respuestas a lo que ve el user
             type: 'POST', //tipo de envio, en este caso es post
@@ -249,12 +250,13 @@ function agregarAlCarrito(idProducto) {
     });
 }
 
-function finalizarCompra(idC) {
-    if (confirm("¿Estás seguro de confirmar este pedido?")) {
+function finalizarCompra(idC, idP) {
+    $respuesta = confirm("¿Estás seguro de confirmar este pedido?");
+    if ($respuesta) {
         $.ajax({
             type: "POST",
             url: '../Action/carrito.php',
-            data: { accion: 'finalizar', idcompra: idC },
+            data: { accion: 'finalizar', idcompra: idC,  idproducto: idP},
             success: function(response) {
                     let res = JSON.parse(response);
                     if (res.success) {

@@ -4,7 +4,14 @@ $objSession = new Session();
 $nombreRol = $objSession->getRol(); // 'admin', 'cliente' o 'deposito'
 $idRol = $objSession->getIdRol();
 $usuarioNombre = $objSession->getUsuario();
-$usuarioMail = $objSession->getMail(); //esto tengo que ver cómo lo hago porque no sé si voy a tener que guardar el mail en la sesion o ir a buscarlo a la base de datos pero por las dudas dejo algo así
+$usuarioMail = $objSession->getMail();
+
+////esto es para poder mostrar las compras de cada user
+$idUsuarioLogueado = $objSession->getIdUsuario(); //recupero el id del usuario q esta en la sesion
+$objCtrlCompraItem = new CompraItemController();
+$objCtrlCompraEstado = new CompraEstadoController();
+$objCtrlCompra = new CompraController();
+$todasMisCompras = $objCtrlCompra->buscar(['idusuario' => $idUsuarioLogueado]);
 ?>
 
 <div class="container mt-4 animate__animated animate__fadeIn">
@@ -69,11 +76,81 @@ $usuarioMail = $objSession->getMail(); //esto tengo que ver cómo lo hago porque
 
                 <?php if ($idRol === 1) : ?>
                     <div class="tab-pane fade" id="compras">
-                        <h5 class="fw-bold mb-3">Mis Pedidos</h5>
-                        <div id="contenedor-pedidos-cliente">
-                            <div class="alert alert-info"><i class="bi bi-info-circle me-2"></i>Hacé clic para ver el estado de tus compras.</div>
+    <h5 class="fw-bold mb-4"><i class="bi bi-clock-history me-2"></i>Seguimiento de mis pedidos</h5>
+    <div class="row g-4">
+        <?php if (count($todasMisCompras) > 0) : ?>
+            <?php foreach ($todasMisCompras as $objCompra) : 
+                $idC = $objCompra->getIdCompra();
+                // Buscamos TODOS los estados por los que pasó esta compra, ordenados por fecha
+                $historialEstados = $objCtrlCompraEstado->buscar(['idcompra' => $idC]);
+                $items = $objCtrlCompraItem->buscar(['idcompra' => $idC]);
+            ?>
+                <div class="col-12">
+                    <div class="card shadow-sm border-0 mb-3">
+                        <div class="card-header bg-white py-3">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="h6 mb-0">Pedido nro:<?php echo $idC; ?></span>
+                                <small class="text-muted">Iniciado el: <?php echo $objCompra->getFecha(); ?></small>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-4 border-end">
+                                    <p class="fw-bold mb-2 small text-uppercase text-muted">Productos</p>
+                                    <ul class="list-unstyled mb-0">
+                                        <?php foreach ($items as $item) : ?>
+                                            <li class="small mb-1">
+                                                <i class="bi bi-dot"></i> 
+                                                <?php echo $item->getObjProducto()->getNombreProducto(); ?> 
+                                                <span class="fw-bold">(x<?php echo $item->getCantidad(); ?>)</span>
+                                            </li>
+                                        <?php endforeach; ?>
+                                    </ul>
+                                </div>
+                                <div class="col-md-8 px-4">
+                                    <p class="fw-bold mb-3 small text-uppercase text-muted">Estado del envío</p>
+                                    <div class="d-flex flex-wrap gap-2">
+                                        <?php foreach ($historialEstados as $index => $objCE) : 
+                                            $esUltimo = ($index === count($historialEstados) - 1);
+                                            $tipoEstado = $objCE->getObjCet()->getIdCompraEstadoTipo();
+                                            $nombreEstado = $objCE->getObjCet()->getDescripcion();
+                                            
+                                            $clase = $esUltimo ? "btn-primary" : "btn-outline-secondary opacity-50";
+                                        ?>
+                                            <div class="d-flex align-items-center">
+                                                <span <?php echo $clase; ?>>
+                                                    <?php if ($esUltimo)  ?>
+                                                    <?php echo strtoupper($nombreEstado); ?>
+                                                </span>
+                                                <?php if (!$esUltimo) : ?>
+                                                    <i class="bi bi-chevron-right mx-1 text-muted"></i>
+                                                <?php endif; ?>
+                                            </div>
+                                        <?php endforeach; ?>
+                                    </div>
+                                    
+                                    <?php 
+                                    $estadoActual = end($historialEstados);
+                                    if ($estadoActual->getObjCet()->getIdCompraEstadoTipo() == 2) : ?>
+                                        <div class="mt-3 text-end">
+                                            <button class="btn btn-sm btn-link text-danger p-0" onclick="cancelarCompra(<?php echo $idC; ?>)">
+                                                ¿Querés cancelar este pedido?
+                                            </button>
+                                        </div>
+                                    <?php endif; ?>
+                                </div>
+                            </div>
                         </div>
                     </div>
+                </div>
+            <?php endforeach; ?>
+        <?php else : ?>
+            <div class="col-12 text-center py-5">
+                <p class="text-muted">No tenés ninguna compra registrada.</p>
+            </div>
+        <?php endif; ?>
+    </div>
+</div>
                 <?php endif; ?>
 
 
@@ -82,16 +159,17 @@ $usuarioMail = $objSession->getMail(); //esto tengo que ver cómo lo hago porque
     </div>
 </div>
 
-<div class="modal fade" id="modalEditarUsuario" tabindex="-1"> <div class="modal-dialog modal-dialog-centered">
+<div class="modal fade" id="modalEditarUsuario" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
-            <form id="formEditarUsuario"> 
+            <form id="formEditarUsuario">
                 <div class="modal-header bg-primary text-white">
                     <h5 class="modal-title">Editar mis Datos</h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
                     <input type="hidden" name="idusuario" id="editar_id">
-                    
+
                     <div class="mb-3">
                         <label class="form-label">Nombre de usuario (opcional)</label>
                         <input type="text" name="usnombre" id="editar_nombre" class="form-control">
@@ -114,33 +192,33 @@ $usuarioMail = $objSession->getMail(); //esto tengo que ver cómo lo hago porque
 </div>
 
 <script>
-function modificarUsuario(id, nombre, mail) {
-    $("#editar_id").val(id);
-    $("#editar_nombre").val(nombre);
-    $("#editar_mail").val(mail);
-    $("#editar_pass").val(""); 
-    var myModal = new bootstrap.Modal(document.getElementById('modalEditarUsuario'));
-    myModal.show();
-}
+    function modificarUsuario(id, nombre, mail) {
+        $("#editar_id").val(id);
+        $("#editar_nombre").val(nombre);
+        $("#editar_mail").val(mail);
+        $("#editar_pass").val("");
+        var myModal = new bootstrap.Modal(document.getElementById('modalEditarUsuario'));
+        myModal.show();
+    }
 
-$("#formEditarUsuario").on("submit", function(e) {
-    e.preventDefault(); 
-    $.ajax({
-        type: "POST",
-        url: "../Action/modificarUsuario.php",
-        data: $(this).serialize(), 
-        success: function(response) {
-            console.log(response); 
-            let res = JSON.parse(response);
-            if (res.success) {
-                alert(res.msg);
-                location.reload(); 
-            } else {
-                alert("Error");
+    $("#formEditarUsuario").on("submit", function(e) {
+        e.preventDefault();
+        $.ajax({
+            type: "POST",
+            url: "../Action/modificarUsuario.php",
+            data: $(this).serialize(),
+            success: function(response) {
+                console.log(response);
+                let res = JSON.parse(response);
+                if (res.success) {
+                    alert(res.msg);
+                    location.reload();
+                } else {
+                    alert("Error");
+                }
+            },
+            error: function() {
+                alert("Error crítico en el servidor.");
             }
-        },
-        error: function() {
-            alert("Error crítico en el servidor.");
-        }
+        });
     });
-});

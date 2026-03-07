@@ -13,6 +13,12 @@ $PROYECTO ='tpfinal_pwd'; //nombre de la carpeta del proyecto
 
 $ROOT =$_SERVER['DOCUMENT_ROOT']."/$PROYECTO/"; //variable que almacena el directorio del proyecto, o sea ruta absoluta al proyecto en el servidor
 
+// esto es lo que hace que PHPMailer y Gregwar funcionen automáticamente
+if (file_exists($ROOT . 'vendor/autoload.php')) {
+    require_once($ROOT . 'vendor/autoload.php');
+}
+
+
 include_once($ROOT.'util/funciones.php'); //incluye las funciones auxiliares
 
 $INICIO = "Location:http://".$_SERVER['HTTP_HOST']."/$PROYECTO/vista/login/login.php"; //URL para redirigir al login

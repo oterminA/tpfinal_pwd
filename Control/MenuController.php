@@ -186,7 +186,6 @@ class MenuController
             if (isset($param['medescripcion']))
                 $where .= " AND medescripcion ='" . $param['medescripcion'] . "'";
 
-            // CAMBIO CRÍTICO AQUÍ:
             if (array_key_exists('idpadre', $param)) {
                 if ($param['idpadre'] === null) {
                     $where .= " AND idpadre IS NULL";
